@@ -4,7 +4,7 @@ import '../../core/theme.dart';
 import '../../core/services/services.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  UserProfileScreen({super.key});
+  const UserProfileScreen({super.key});
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();
@@ -135,7 +135,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             border: Border.all(color: roleColor, width: 2),
                             boxShadow: [
                               BoxShadow(
-                                color: roleColor.withOpacity(0.25),
+                                color: roleColor.withValues(alpha: 0.25),
                                 blurRadius: 15,
                                 spreadRadius: 2,
                               ),
@@ -158,9 +158,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: roleColor.withOpacity(0.12),
+                        color: roleColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: roleColor.withOpacity(0.3)),
+                        border: Border.all(color: roleColor.withValues(alpha: 0.3)),
                       ),
                       child: Text(
                         user.role.name.toUpperCase(),
@@ -175,7 +175,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               // Form fields card
               GlassCard(
                 radius: 24,
-                borderColor: roleColor.withOpacity(0.15),
+                borderColor: roleColor.withValues(alpha: 0.15),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -256,7 +256,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     else
                       Container(
                         padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(color: Colors.white.withOpacity(0.02), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.borderCard)),
+                        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.02), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.borderCard)),
                         child: Row(
                           children: [
                             Icon(Icons.info_outline_rounded, color: AppTheme.textSecondary, size: 16),
@@ -288,7 +288,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       prefixIcon: Icon(icon, color: roleColor, size: 18),
       suffixIcon: suffix,
       filled: true,
-      fillColor: Colors.black.withOpacity(0.15),
+      fillColor: Colors.black.withValues(alpha: 0.15),
       enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.borderCard)),
       disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.transparent)),
       focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: roleColor)),

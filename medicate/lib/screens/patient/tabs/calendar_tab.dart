@@ -59,7 +59,7 @@ class _CalendarTabState extends State<CalendarTab> {
               Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: AppTheme.border, borderRadius: BorderRadius.circular(4)))),
               const SizedBox(height: 20),
               Row(children: [
-                Container(width: 44, height: 44, decoration: BoxDecoration(color: AppTheme.primaryOrange.withOpacity(0.12), borderRadius: BorderRadius.circular(12)),
+                Container(width: 44, height: 44, decoration: BoxDecoration(color: AppTheme.primaryOrange.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(12)),
                   child: Icon(Icons.event_available_rounded, color: AppTheme.primaryOrange, size: 22)),
                 const SizedBox(width: 12),
                 Text('Book Appointment', style: AppTextStyles.heading3()),
@@ -188,7 +188,7 @@ class _CalendarTabState extends State<CalendarTab> {
                     Container(
                       width: 42, height: 42,
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryOrange.withOpacity(0.12),
+                        color: AppTheme.primaryOrange.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(Icons.calendar_month_rounded, color: AppTheme.primaryOrange, size: 22),
@@ -315,7 +315,9 @@ class _CalendarTabState extends State<CalendarTab> {
         .toSet();
 
     final cells = <Widget>[];
-    for (int i = 1; i < startWeekday; i++) cells.add(const SizedBox.shrink());
+    for (int i = 1; i < startWeekday; i++) {
+      cells.add(const SizedBox.shrink());
+    }
     for (int day = 1; day <= daysInMonth; day++) {
       final date = DateTime(_calendarMonth.year, _calendarMonth.month, day);
       final isSelected = date.day == _selectedDate.day && date.month == _selectedDate.month && date.year == _selectedDate.year;
@@ -334,7 +336,7 @@ class _CalendarTabState extends State<CalendarTab> {
                 color: isSelected
                     ? AppTheme.primaryOrange
                     : isToday
-                        ? AppTheme.primaryOrange.withOpacity(0.15)
+                        ? AppTheme.primaryOrange.withValues(alpha: 0.15)
                         : Colors.transparent,
                 shape: BoxShape.circle,
                 border: isToday && !isSelected ? Border.all(color: AppTheme.primaryOrange, width: 1.5) : null,
@@ -394,14 +396,14 @@ class _AppointmentCard extends StatelessWidget {
         color: AppTheme.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppTheme.border),
-        boxShadow: AppTheme.isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 3))],
+        boxShadow: AppTheme.isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 3))],
       ),
       child: Row(
         children: [
           Container(
             width: 50, height: 50,
             decoration: BoxDecoration(
-              color: AppTheme.primaryOrange.withOpacity(0.12),
+              color: AppTheme.primaryOrange.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Column(
@@ -438,9 +440,9 @@ class _AppointmentCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _statusColor.withOpacity(0.12),
+                  color: _statusColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: _statusColor.withOpacity(0.3)),
+                  border: Border.all(color: _statusColor.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   appointment.status,

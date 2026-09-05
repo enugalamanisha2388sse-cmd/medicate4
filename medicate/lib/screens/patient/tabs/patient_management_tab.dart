@@ -60,7 +60,7 @@ class _PatientManagementTabState extends State<PatientManagementTab> {
                   Container(
                     width: 44, height: 44,
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryGreen.withOpacity(0.1),
+                      color: AppTheme.primaryGreen.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -110,7 +110,7 @@ class _PatientManagementTabState extends State<PatientManagementTab> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: selectedGender,
+                        initialValue: selectedGender,
                         dropdownColor: AppTheme.cardColor,
                         style: AppTextStyles.bodyLarge(color: AppTheme.textPrimary),
                         decoration: AppTheme.inputDecoration(
@@ -269,7 +269,7 @@ class _PatientManagementTabState extends State<PatientManagementTab> {
                       Container(
                         width: 42, height: 42,
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryGreen.withOpacity(0.12),
+                          color: AppTheme.primaryGreen.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(Icons.people_alt_rounded, color: AppTheme.primaryGreen, size: 22),
@@ -332,7 +332,7 @@ class _PatientManagementTabState extends State<PatientManagementTab> {
                   : ListView.separated(
                       padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
                       itemCount: filtered.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      separatorBuilder: (context, index) => const SizedBox(height: 12),
                       itemBuilder: (_, i) => FadeInSlide(
                         duration: const Duration(milliseconds: 350),
                         delay: Duration(milliseconds: i * 50),
@@ -398,7 +398,7 @@ class _PatientCardState extends State<_PatientCard> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppTheme.border),
         boxShadow: AppTheme.isDark ? [] : [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 14, offset: const Offset(0, 4)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 14, offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
@@ -415,9 +415,9 @@ class _PatientCardState extends State<_PatientCard> {
                   Container(
                     width: 50, height: 50,
                     decoration: BoxDecoration(
-                      color: _avatarColor.withOpacity(0.15),
+                      color: _avatarColor.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
-                      border: Border.all(color: _avatarColor.withOpacity(0.3), width: 1.5),
+                      border: Border.all(color: _avatarColor.withValues(alpha: 0.3), width: 1.5),
                     ),
                     child: Center(
                       child: Text(
@@ -513,9 +513,9 @@ class _PatientCardState extends State<_PatientCard> {
                                     children: allergies.map((a) => Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: AppTheme.warning.withOpacity(0.12),
+                                        color: AppTheme.warning.withValues(alpha: 0.12),
                                         borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: AppTheme.warning.withOpacity(0.3)),
+                                        border: Border.all(color: AppTheme.warning.withValues(alpha: 0.3)),
                                       ),
                                       child: Text(a, style: GoogleFonts.poppins(
                                         fontSize: 11, fontWeight: FontWeight.w600, color: AppTheme.warning,
@@ -548,7 +548,7 @@ class _InfoChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.10),
+        color: color.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(label, style: GoogleFonts.poppins(

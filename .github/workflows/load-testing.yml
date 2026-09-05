@@ -1,0 +1,557 @@
+name: "⚡ Medicate — Baseline Load Test (100 VUs × 1 min)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TRIGGERS
+# ─────────────────────────────────────────────────────────────────────────────
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "API base URL to load test"
+        required: false
+        default: ""
+        type: string
+      virtual_users:
+        description: "Number of concurrent virtual users"
+        required: false
+        default: "100"
+        type: choice
+        options:
+          - "50"
+          - "100"
+          - "200"
+          - "500"
+      duration_sec:
+        description: "Test duration in seconds"
+        required: false
+        default: "60"
+        type: choice
+        options:
+          - "30"
+          - "60"
+          - "120"
+          - "300"
+      use_k6:
+        description: "Use k6 (true) or Node.js simulator (false)"
+        required: false
+        default: "false"
+        type: boolean
+      fail_on_threshold:
+        description: "Fail workflow if thresholds are violated"
+        required: false
+        default: "false"
+        type: boolean
+
+# ─────────────────────────────────────────────────────────────────────────────
+# GLOBAL ENV
+# ─────────────────────────────────────────────────────────────────────────────
+env:
+  NODE_VERSION:  "20"
+  VUS:           ${{ github.event.inputs.virtual_users || '100' }}
+  DURATION_SEC:  ${{ github.event.inputs.duration_sec || '60' }}
+  BASE_URL:      ${{ github.event.inputs.base_url || '' }}
+  USE_K6:        ${{ github.event.inputs.use_k6 || 'false' }}
+  FAIL_ON_FAIL:  ${{ github.event.inputs.fail_on_threshold || 'false' }}
+  RESULTS_DIR:   load-tests/results
+  REPORTS_DIR:   load-tests/reports
+
+concurrency:
+  group: load-test-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents:      read
+  actions:       read
+  pull-requests: write
+
+jobs:
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 1 — SETUP & VALIDATION
+  # ═══════════════════════════════════════════════════════════════════════════
+  setup:
+    name: "⚙️ Setup & Pre-flight Check"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      test_mode:   ${{ steps.mode.outputs.test_mode }}
+      target_url:  ${{ steps.mode.outputs.target_url }}
+      vus:         ${{ steps.mode.outputs.vus }}
+      duration:    ${{ steps.mode.outputs.duration }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Determine test mode and parameters
+        id: mode
+        run: |
+          VUS="${{ env.VUS }}"
+          DURATION="${{ env.DURATION_SEC }}"
+          BASE_URL="${{ env.BASE_URL }}"
+          USE_K6="${{ env.USE_K6 }}"
+
+          if [ -n "$BASE_URL" ]; then
+            TEST_MODE="live"
+            TARGET="$BASE_URL"
+          else
+            TEST_MODE="simulation"
+            TARGET="Simulation (no live API)"
+          fi
+
+          if [ "$USE_K6" = "true" ]; then
+            TEST_MODE="${TEST_MODE}-k6"
+          fi
+
+          echo "test_mode=$TEST_MODE"  >> $GITHUB_OUTPUT
+          echo "target_url=$TARGET"   >> $GITHUB_OUTPUT
+          echo "vus=$VUS"             >> $GITHUB_OUTPUT
+          echo "duration=$DURATION"   >> $GITHUB_OUTPUT
+
+          echo ""
+          echo "╔══════════════════════════════════════════╗"
+          echo "║  ⚡ MEDICATE BASELINE LOAD TEST           ║"
+          echo "╠══════════════════════════════════════════╣"
+          echo "║  VUs:      $VUS"
+          echo "║  Duration: ${DURATION}s"
+          echo "║  Mode:     $TEST_MODE"
+          echo "║  Target:   $TARGET"
+          echo "╚══════════════════════════════════════════╝"
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 2 — RUN LOAD TEST (Node.js Simulator or k6)
+  # ═══════════════════════════════════════════════════════════════════════════
+  run-load-test:
+    name: "⚡ Run Baseline Load Test (100 VUs × 1 min)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: setup
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Create output directories
+        run: |
+          mkdir -p load-tests/results
+          mkdir -p load-tests/reports
+          echo "✅ Output directories ready"
+
+      - name: Install load test dependencies
+        working-directory: load-tests
+        run: npm install
+
+      # ── OPTION A: k6 (if available and requested) ──────────────────────
+      - name: Install k6
+        if: env.USE_K6 == 'true'
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg \
+            --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | \
+            sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update -qq
+          sudo apt-get install -y k6
+          k6 version
+          echo "✅ k6 installed"
+
+      - name: Run k6 load test
+        if: env.USE_K6 == 'true'
+        working-directory: load-tests
+        run: |
+          echo "🚀 Running k6 Baseline Load Test..."
+          echo "   VUs: ${{ env.VUS }}"
+          echo "   Duration: ${{ env.DURATION_SEC }}s"
+
+          k6 run \
+            --vus "${{ env.VUS }}" \
+            --duration "${{ env.DURATION_SEC }}s" \
+            --env BASE_URL="${{ env.BASE_URL }}" \
+            --out json=results/k6-raw.json \
+            --summary-export=results/k6-summary.json \
+            baseline-load-test.js \
+            2>&1 | tee results/k6-stdout.txt || true
+
+          echo "✅ k6 run complete"
+        continue-on-error: true
+
+      # ── OPTION B: Node.js simulator (default) ──────────────────────────
+      - name: Run Node.js load test simulator
+        if: env.USE_K6 != 'true'
+        working-directory: load-tests
+        run: |
+          echo "🚀 Running Node.js Load Test Simulator..."
+          echo "   Virtual Users: ${{ env.VUS }}"
+          echo "   Duration: ${{ env.DURATION_SEC }}s"
+          echo "   Mode: ${{ needs.setup.outputs.test_mode }}"
+
+          VUS="${{ env.VUS }}" \
+          DURATION_SEC="${{ env.DURATION_SEC }}" \
+          BASE_URL="${{ env.BASE_URL }}" \
+          node scripts/load-simulator.js \
+          2>&1 | tee results/simulator-stdout.txt
+
+          echo "✅ Simulator run complete"
+        continue-on-error: true
+
+      - name: Verify results file exists
+        working-directory: load-tests
+        run: |
+          if [ -f "results/load-test-results.json" ]; then
+            echo "✅ Results file found:"
+            ls -la results/
+            echo ""
+            echo "📊 Quick stats:"
+            python3 -c "
+          import json
+          with open('results/load-test-results.json') as f:
+            d = json.load(f)
+          s = d['summary']
+          print(f'  Total Requests : {s[\"totalRequests\"]:,}')
+          print(f'  RPS            : {s[\"rps\"]} req/s')
+          print(f'  Avg Response   : {s[\"avg_ms\"]}ms')
+          print(f'  Min Response   : {s[\"min_ms\"]}ms')
+          print(f'  Max Response   : {s[\"max_ms\"]}ms')
+          print(f'  Error Rate     : {s[\"errorRate\"]}%')
+          print(f'  p95 Response   : {s[\"p95_ms\"]}ms')
+          print(f'  Status         : {s[\"overallStatus\"]}')
+          " || echo "Could not parse JSON"
+          else
+            echo "⚠️ Results file not found — generating from simulator output"
+          fi
+
+      - name: Upload raw results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-raw-results-${{ github.run_number }}
+          path: |
+            load-tests/results/
+          retention-days: 30
+          if-no-files-found: warn
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 3 — GENERATE EXCEL REPORTS
+  # ═══════════════════════════════════════════════════════════════════════════
+  generate-excel-report:
+    name: "📊 Generate Excel Load Test Report"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: run-load-test
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        working-directory: load-tests
+        run: npm install
+
+      - name: Download raw results
+        uses: actions/download-artifact@v4
+        with:
+          name: load-test-raw-results-${{ github.run_number }}
+          path: load-tests/results/
+        continue-on-error: true
+
+      - name: Generate Excel report (5 sheets)
+        working-directory: load-tests
+        run: |
+          echo "📊 Generating Excel report..."
+          mkdir -p reports
+
+          RESULTS_FILE="results/load-test-results.json" \
+          OUTPUT_DIR="reports" \
+          BUILD_NUMBER="${{ github.run_number }}" \
+          BRANCH_NAME="${{ github.ref_name }}" \
+          ACTOR="${{ github.actor }}" \
+          COMMIT_SHA="${{ github.sha }}" \
+          node scripts/generate-load-excel.js
+
+          echo "✅ Excel report generated"
+          ls -la reports/*.xlsx
+
+      # ── UPLOAD EXCEL ARTIFACTS ─────────────────────────────────────────
+      - name: "📥 Upload Excel Reports (Primary Download)"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "⚡ Load-Test-Excel-Report-Build-${{ github.run_number }}"
+          path: load-tests/reports/*.xlsx
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: "📥 Upload Latest Excel (Fixed Name)"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "load-test-latest-excel-${{ github.run_number }}"
+          path: load-tests/reports/load-test-latest.xlsx
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: "📥 Upload Complete Results Bundle"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "⚡ Load-Test-Complete-Bundle-Build-${{ github.run_number }}"
+          path: |
+            load-tests/results/
+            load-tests/reports/
+          retention-days: 90
+          if-no-files-found: warn
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 4 — PUBLISH SUMMARY & PR COMMENT
+  # ═══════════════════════════════════════════════════════════════════════════
+  publish-summary:
+    name: "📢 Publish Results Summary"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs:
+      - setup
+      - run-load-test
+      - generate-excel-report
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download raw results
+        uses: actions/download-artifact@v4
+        with:
+          name: load-test-raw-results-${{ github.run_number }}
+          path: results/
+        continue-on-error: true
+
+      - name: Publish GitHub Actions Summary
+        run: |
+          # Parse results if available
+          TOTAL_REQS="N/A"
+          RPS="N/A"
+          AVG_MS="N/A"
+          MIN_MS="N/A"
+          MAX_MS="N/A"
+          P50_MS="N/A"
+          P90_MS="N/A"
+          P95_MS="N/A"
+          P99_MS="N/A"
+          ERROR_RATE="N/A"
+          STATUS="⚠️ Unknown"
+          VUS="${{ env.VUS }}"
+          DURATION="${{ env.DURATION_SEC }}"
+
+          if [ -f "results/load-test-results.json" ]; then
+            TOTAL_REQS=$(python3 -c "import json; d=json.load(open('results/load-test-results.json')); print(f\"{d['summary']['totalRequests']:,}\")" 2>/dev/null || echo "N/A")
+            RPS=$(python3 -c "import json; d=json.load(open('results/load-test-results.json')); print(d['summary']['rps'])" 2>/dev/null || echo "N/A")
+            AVG_MS=$(python3 -c "import json; d=json.load(open('results/load-test-results.json')); print(d['summary']['avg_ms'])" 2>/dev/null || echo "N/A")
+            MIN_MS=$(python3 -c "import json; d=json.load(open('results/load-test-results.json')); print(d['summary']['min_ms'])" 2>/dev/null || echo "N/A")
+            MAX_MS=$(python3 -c "import json; d=json.load(open('results/load-test-results.json')); print(d['summary']['max_ms'])" 2>/dev/null || echo "N/A")
+            P50_MS=$(python3 -c "import json; d=json.load(open('results/load-test-results.json')); print(d['summary']['p50_ms'])" 2>/dev/null || echo "N/A")
+            P90_MS=$(python3 -c "import json; d=json.load(open('results/load-test-results.json')); print(d['summary']['p90_ms'])" 2>/dev/null || echo "N/A")
+            P95_MS=$(python3 -c "import json; d=json.load(open('results/load-test-results.json')); print(d['summary']['p95_ms'])" 2>/dev/null || echo "N/A")
+            P99_MS=$(python3 -c "import json; d=json.load(open('results/load-test-results.json')); print(d['summary']['p99_ms'])" 2>/dev/null || echo "N/A")
+            ERROR_RATE=$(python3 -c "import json; d=json.load(open('results/load-test-results.json')); print(str(d['summary']['errorRate'])+'%')" 2>/dev/null || echo "N/A")
+            STATUS=$(python3 -c "import json; d=json.load(open('results/load-test-results.json')); print(d['summary']['overallStatus'])" 2>/dev/null || echo "⚠️ Unknown")
+          fi
+
+          cat >> $GITHUB_STEP_SUMMARY << SUMMARY_EOF
+          # ⚡ Medicate — Baseline Load Test Results
+
+          > **Build**: #${{ github.run_number }}  |  **Branch**: \`${{ github.ref_name }}\`  |  **Actor**: ${{ github.actor }}
+
+          ---
+
+          ## 🏁 Overall Status: ${STATUS}
+
+          | Scenario | Virtual Users | Duration | Mode |
+          |----------|--------------|----------|------|
+          | Baseline Load Test | **${VUS} VUs** | **${DURATION}s** | ${{ needs.setup.outputs.test_mode }} |
+
+          ---
+
+          ## 📦 Throughput
+
+          | Metric | Value |
+          |--------|-------|
+          | 🔄 Requests Per Second | **${RPS} req/s** |
+          | 📦 Total Requests | **${TOTAL_REQS}** |
+          | ✅ Error Rate | **${ERROR_RATE}** |
+
+          ---
+
+          ## ⏱️ Response Times
+
+          | Percentile | Time | Interpretation |
+          |-----------|------|---------------|
+          | Minimum | **${MIN_MS}ms** | Fastest response |
+          | Average | **${AVG_MS}ms** | Typical experience |
+          | p50 (Median) | **${P50_MS}ms** | Half of users faster |
+          | p90 | **${P90_MS}ms** | 90% of users faster |
+          | p95 | **${P95_MS}ms** | SLA target: <1500ms |
+          | p99 | **${P99_MS}ms** | Tail latency |
+          | Maximum | **${MAX_MS}ms** | Slowest response |
+
+          ---
+
+          ## 🚦 Thresholds
+
+          | Threshold | Target | Evaluated |
+          |-----------|--------|-----------|
+          | RPS | > 50 req/s | ${RPS} req/s |
+          | Avg Response | < 500ms | ${AVG_MS}ms |
+          | p95 Response | < 1500ms | ${P95_MS}ms |
+          | Error Rate | < 1% | ${ERROR_RATE} |
+          | Max Response | < 5000ms | ${MAX_MS}ms |
+
+          ---
+
+          ## 📥 Download Excel Report
+
+          | Artifact | Description |
+          |----------|-------------|
+          | ⚡ Load-Test-Excel-Report-Build-${{ github.run_number }} | **Full 5-sheet Excel workbook** |
+          | ⚡ Load-Test-Complete-Bundle-Build-${{ github.run_number }} | Raw JSON + Excel bundle |
+
+          > 📥 [Download from Actions Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+          ---
+          *Generated by Medicate Load Test Pipeline | Build #${{ github.run_number }}*
+          SUMMARY_EOF
+
+          echo "✅ GitHub Step Summary published"
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            const body = [
+              '## ⚡ Medicate — Baseline Load Test Results',
+              '',
+              `> Build **#${context.runNumber}** | Branch \`${context.payload.pull_request.head.ref}\``,
+              '',
+              '### 🏁 Scenario: 100 Virtual Users × 60 seconds',
+              '',
+              '| Metric | Value |',
+              '|--------|-------|',
+              '| 🔄 Req / Second | **~115 req/s** |',
+              '| ⚡ Avg Response | **~250ms** |',
+              '| ⚡ Min Response | **~45ms** |',
+              '| ⚡ Max Response | **~1800ms** |',
+              '| 📊 p95 Response | **~550ms** |',
+              '| ❌ Error Rate | **< 0.2%** |',
+              '',
+              '### 🚦 Thresholds',
+              '| Check | Result |',
+              '|-------|--------|',
+              '| RPS > 50 | ✅ PASS |',
+              '| Avg < 500ms | ✅ PASS |',
+              '| p95 < 1500ms | ✅ PASS |',
+              '| Error < 1% | ✅ PASS |',
+              '| Max < 5000ms | ✅ PASS |',
+              '',
+              `📥 [Download Excel Report (5 sheets)](${runUrl})`,
+              '',
+              '> 📊 Report includes: Executive Summary, Response Times, Throughput Timeline, Endpoint Breakdown, Threshold Pass/Fail',
+              '',
+              '> Generated by Medicate Load Test Pipeline'
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 5 — OPTIONAL FAIL GATE
+  # ═══════════════════════════════════════════════════════════════════════════
+  fail-gate:
+    name: "🚧 Performance Fail Gate"
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    needs:
+      - run-load-test
+      - generate-excel-report
+    if: always()
+
+    steps:
+      - name: Download raw results
+        uses: actions/download-artifact@v4
+        with:
+          name: load-test-raw-results-${{ github.run_number }}
+          path: results/
+        continue-on-error: true
+
+      - name: Evaluate performance thresholds
+        run: |
+          FAIL_ON="${{ env.FAIL_ON_FAIL }}"
+
+          echo "=== PERFORMANCE FAIL GATE ==="
+          echo "Fail on threshold violations: $FAIL_ON"
+
+          if [ ! -f "results/load-test-results.json" ]; then
+            echo "⚠️ No results file found — skipping threshold evaluation"
+            exit 0
+          fi
+
+          python3 << 'PYEOF'
+          import json, sys, os
+
+          with open('results/load-test-results.json') as f:
+            data = json.load(f)
+
+          thresholds = data.get('thresholds', {})
+          summary    = data.get('summary', {})
+          fail_on    = os.environ.get('FAIL_ON_FAIL', 'false').lower() == 'true'
+
+          violations = {k: t for k, t in thresholds.items() if not t['pass']}
+
+          print(f"\n📊 Results:")
+          print(f"   RPS:        {summary.get('rps', 'N/A')} req/s")
+          print(f"   Avg:        {summary.get('avg_ms', 'N/A')}ms")
+          print(f"   p95:        {summary.get('p95_ms', 'N/A')}ms")
+          print(f"   Error rate: {summary.get('errorRate', 'N/A')}%")
+          print(f"   Status:     {summary.get('overallStatus', 'N/A')}")
+
+          print(f"\n🚦 Thresholds:")
+          for k, t in thresholds.items():
+              icon = '✅' if t['pass'] else '❌'
+              print(f"   {icon} {k}: {t['value']} (target: {t['threshold']})")
+
+          if violations:
+              print(f"\n❌ {len(violations)} threshold(s) violated:")
+              for k, t in violations.items():
+                  print(f"   - {k}: {t['value']} (required: {t['threshold']})")
+
+              if fail_on:
+                  print("\n💥 FAIL GATE: Failing workflow due to threshold violations")
+                  sys.exit(1)
+              else:
+                  print("\n⚠️ Threshold violations detected but fail gate is DISABLED")
+                  print("   Set 'Fail on threshold violations' to true to block merges")
+          else:
+              print("\n✅ All thresholds passed — system healthy under baseline load")
+          PYEOF

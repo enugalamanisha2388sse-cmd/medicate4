@@ -53,7 +53,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
               height: 220,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.08),
+                color: Colors.white.withValues(alpha: 0.08),
               ),
             ),
           ),
@@ -65,7 +65,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
               height: 200,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.06),
+                color: Colors.white.withValues(alpha: 0.06),
               ),
             ),
           ),
@@ -87,10 +87,10 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                             width: 90,
                             height: 90,
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
+                              color: Colors.white.withValues(alpha: 0.15),
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
+                                color: Colors.white.withValues(alpha: 0.3),
                                 width: 2,
                               ),
                             ),
@@ -117,7 +117,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                             style: GoogleFonts.poppins(
                               fontSize: 13,
                               fontWeight: FontWeight.w400,
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.white.withValues(alpha: 0.8),
                               height: 1.5,
                             ),
                           ),
@@ -164,6 +164,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                               color: AppTheme.primaryBlue,
                               lightColor: AppTheme.lightBlue,
                               onTap: () => _navigate(context, UserRole.patient),
+                              semanticKey: 'role_patient_btn',
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -176,6 +177,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                               color: AppTheme.primaryIndigo,
                               lightColor: const Color(0xFFE0E7FF),
                               onTap: () => _navigate(context, UserRole.doctor),
+                              semanticKey: 'role_doctor_btn',
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -188,6 +190,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                               color: const Color(0xFFF59E0B),
                               lightColor: const Color(0xFFFEF3C7),
                               onTap: () => _navigate(context, UserRole.admin),
+                              semanticKey: 'role_admin_btn',
                             ),
                           ),
                           const SizedBox(height: 28),
@@ -225,6 +228,7 @@ class _RoleCard extends StatefulWidget {
   final Color color;
   final Color lightColor;
   final VoidCallback onTap;
+  final String? semanticKey;
 
   const _RoleCard({
     required this.icon,
@@ -233,6 +237,7 @@ class _RoleCard extends StatefulWidget {
     required this.color,
     required this.lightColor,
     required this.onTap,
+    this.semanticKey,
   });
 
   @override
@@ -245,6 +250,7 @@ class _RoleCardState extends State<_RoleCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      key: widget.semanticKey != null ? Key(widget.semanticKey!) : null,
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) {
         setState(() => _pressed = false);
@@ -264,7 +270,7 @@ class _RoleCardState extends State<_RoleCard> {
                 ? []
                 : [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 16,
                       offset: const Offset(0, 4),
                     ),

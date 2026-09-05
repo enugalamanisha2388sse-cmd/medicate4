@@ -6,7 +6,7 @@ import '../../core/services/services.dart';
 class GatePassScreen extends StatefulWidget {
   final Appointment? appointment;
 
-  GatePassScreen({super.key, this.appointment});
+  const GatePassScreen({super.key, this.appointment});
 
   @override
   State<GatePassScreen> createState() => _GatePassScreenState();
@@ -72,8 +72,8 @@ class _GatePassScreenState extends State<GatePassScreen> with SingleTickerProvid
             Center(
               child: GlassCard(
                 radius: 24,
-                borderColor: AppTheme.primaryTeal.withOpacity(0.3),
-                fillColor: AppTheme.cardColor.withOpacity(0.4),
+                borderColor: AppTheme.primaryTeal.withValues(alpha: 0.3),
+                fillColor: AppTheme.cardColor.withValues(alpha: 0.4),
                 padding: EdgeInsets.zero,
                 child: Container(
                   width: 320,
@@ -81,7 +81,7 @@ class _GatePassScreenState extends State<GatePassScreen> with SingleTickerProvid
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primaryTeal.withOpacity(0.1),
+                        color: AppTheme.primaryTeal.withValues(alpha: 0.1),
                         blurRadius: 20,
                         spreadRadius: 2,
                       )
@@ -93,7 +93,7 @@ class _GatePassScreenState extends State<GatePassScreen> with SingleTickerProvid
                       Container(
                         padding: EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryTeal.withOpacity(0.08),
+                          color: AppTheme.primaryTeal.withValues(alpha: 0.08),
                           borderRadius: const BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
                         ),
                         child: Row(
@@ -109,7 +109,7 @@ class _GatePassScreenState extends State<GatePassScreen> with SingleTickerProvid
                             ),
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(color: AppTheme.primaryTeal.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                              decoration: BoxDecoration(color: AppTheme.primaryTeal.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
                               child: Icon(Icons.qr_code_scanner_rounded, color: AppTheme.primaryCyan, size: 18),
                             )
                           ],
@@ -269,7 +269,7 @@ class _GatePassScreenState extends State<GatePassScreen> with SingleTickerProvid
 }
 
 class DottedLinePainter extends StatelessWidget {
-  DottedLinePainter({super.key});
+  const DottedLinePainter({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -331,7 +331,7 @@ class BarcodePainter extends CustomPainter {
     canvas.drawLine(Offset(0, sweepY), Offset(size.width, sweepY), scanPaint);
 
     final glowPaint = Paint()
-      ..color = AppTheme.primaryCyan.withOpacity(0.2)
+      ..color = AppTheme.primaryCyan.withValues(alpha: 0.2)
       ..strokeWidth = 8.0
       ..style = PaintingStyle.stroke;
     canvas.drawLine(Offset(0, sweepY), Offset(size.width, sweepY), glowPaint);

@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 import '../../core/theme.dart';
 
 class VideoConsultScreen extends StatefulWidget {
-  VideoConsultScreen({super.key});
+  const VideoConsultScreen({super.key});
 
   @override
   State<VideoConsultScreen> createState() => _VideoConsultScreenState();
@@ -20,6 +21,9 @@ class _VideoConsultScreenState extends State<VideoConsultScreen> with TickerProv
   String _callState = 'idle';
   String? _callingDoctorName;
   String? _callingDoctorDept;
+
+  CameraController? _cameraController;
+  bool _isCameraInitialized = false;
 
   final List<Map<String, String>> _doctors = [
     {'name': 'Dr. Sarah Connor', 'dept': 'Cardiology Specialist', 'exp': '12 yrs exp', 'status': 'Online'},
@@ -46,7 +50,14 @@ class _VideoConsultScreenState extends State<VideoConsultScreen> with TickerProv
     _rippleController.dispose();
     _telemetryController.dispose();
     _callTimer?.cancel();
+    _disposeCamera();
     super.dispose();
+  }
+
+  void _disposeCamera() {
+    _cameraController?.dispose();
+    _cameraController = null;
+    _isCameraInitialized = false;
   }
 
   void _startCallSequence(String docName, String dept) {
@@ -73,8 +84,40 @@ class _VideoConsultScreenState extends State<VideoConsultScreen> with TickerProv
         _rippleController.stop();
         _telemetryController.repeat();
         _startTimer();
+        _initializeCamera();
       });
     });
+  }
+
+  Future<void> _initializeCamera() async {
+    try {
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) return;
+
+      CameraDescription? frontCamera;
+      for (var camera in cameras) {
+        if (camera.lensDirection == CameraLensDirection.front) {
+          frontCamera = camera;
+          break;
+        }
+      }
+
+      final selectedCamera = frontCamera ?? cameras.first;
+
+      _cameraController = CameraController(
+        selectedCamera,
+        ResolutionPreset.medium,
+        enableAudio: false,
+      );
+
+      await _cameraController!.initialize();
+      if (!mounted) return;
+      setState(() {
+        _isCameraInitialized = true;
+      });
+    } catch (e) {
+      print("Camera initialization error: $e");
+    }
   }
 
   void _startTimer() {
@@ -91,6 +134,7 @@ class _VideoConsultScreenState extends State<VideoConsultScreen> with TickerProv
     _callTimer?.cancel();
     _rippleController.stop();
     _telemetryController.stop();
+    _disposeCamera();
     setState(() {
       _callState = 'idle';
       _callDuration = 0;
@@ -149,8 +193,8 @@ class _VideoConsultScreenState extends State<VideoConsultScreen> with TickerProv
                   margin: EdgeInsets.only(bottom: 16.0),
                   child: GlassCard(
                     radius: 20,
-                    borderColor: isOnline ? AppTheme.primaryTeal.withOpacity(0.2) : AppTheme.borderCard,
-                    fillColor: isOnline ? AppTheme.primaryTeal.withOpacity(0.02) : Color(0x05FFFFFF),
+                    borderColor: isOnline ? AppTheme.primaryTeal.withValues(alpha: 0.2) : AppTheme.borderCard,
+                    fillColor: isOnline ? AppTheme.primaryTeal.withValues(alpha: 0.02) : Color(0x05FFFFFF),
                     child: Row(
                       children: [
                         // Doctor Avatar Icon
@@ -158,7 +202,7 @@ class _VideoConsultScreenState extends State<VideoConsultScreen> with TickerProv
                           padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: isOnline ? AppTheme.primaryTeal.withOpacity(0.1) : AppTheme.textSecondary.withOpacity(0.1),
+                            color: isOnline ? AppTheme.primaryTeal.withValues(alpha: 0.1) : AppTheme.textSecondary.withValues(alpha: 0.1),
                           ),
                           child: Icon(
                             Icons.person,
@@ -265,8 +309,8 @@ class _VideoConsultScreenState extends State<VideoConsultScreen> with TickerProv
                           height: 140 * _rippleController.value,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: AppTheme.primaryTeal.withOpacity(0.2 * (1 - _rippleController.value)),
-                            border: Border.all(color: AppTheme.primaryTeal.withOpacity(0.4 * (1 - _rippleController.value)), width: 2),
+                            color: AppTheme.primaryTeal.withValues(alpha: 0.2 * (1 - _rippleController.value)),
+                            border: Border.all(color: AppTheme.primaryTeal.withValues(alpha: 0.4 * (1 - _rippleController.value)), width: 2),
                           ),
                         ),
                         Container(
@@ -274,13 +318,13 @@ class _VideoConsultScreenState extends State<VideoConsultScreen> with TickerProv
                           height: 200 * _rippleController.value,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: AppTheme.primaryTeal.withOpacity(0.1 * (1 - _rippleController.value)),
-                            border: Border.all(color: AppTheme.primaryTeal.withOpacity(0.2 * (1 - _rippleController.value)), width: 1.5),
+                            color: AppTheme.primaryTeal.withValues(alpha: 0.1 * (1 - _rippleController.value)),
+                            border: Border.all(color: AppTheme.primaryTeal.withValues(alpha: 0.2 * (1 - _rippleController.value)), width: 1.5),
                           ),
                         ),
                         CircleAvatar(
                           radius: 50,
-                          backgroundColor: AppTheme.primaryTeal.withOpacity(0.15),
+                          backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.15),
                           child: Icon(Icons.person, size: 64, color: AppTheme.primaryCyan),
                         ),
                       ],
@@ -321,27 +365,45 @@ class _VideoConsultScreenState extends State<VideoConsultScreen> with TickerProv
               ),
             ),
 
-            // 4. PIP Local Video Stream (Miniature camera mockup)
+            // 4. PIP Local Video Stream (Camera Preview)
             if (_callState == 'active')
               Positioned(
                 top: 40,
                 right: 20,
-                child: GlassCard(
-                  radius: 16,
-                  width: 90,
-                  height: 130,
-                  padding: EdgeInsets.zero,
-                  borderColor: AppTheme.primaryCyan.withOpacity(0.3),
-                  fillColor: Colors.black.withOpacity(0.6),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.videocam, color: Colors.greenAccent, size: 24),
-                        SizedBox(height: 6),
-                        Text('Patient (You)', style: TextStyle(color: Colors.white, fontSize: 8)),
-                      ],
-                    ),
+                child: Container(
+                  width: 95,
+                  height: 135,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppTheme.primaryCyan.withOpacity(0.3), width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
+                      )
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14.5),
+                    child: _isCameraInitialized && _cameraController != null
+                        ? AspectRatio(
+                            aspectRatio: _cameraController!.value.aspectRatio,
+                            child: CameraPreview(_cameraController!),
+                          )
+                        : Container(
+                            color: Colors.black.withOpacity(0.8),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.videocam_off_rounded, color: Colors.redAccent, size: 20),
+                                  SizedBox(height: 4),
+                                  Text('Connecting...', style: TextStyle(color: Colors.white, fontSize: 8)),
+                                ],
+                              ),
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -396,7 +458,7 @@ class TelemetryCanvasPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // 1. Draw animated telemetry graphs/scan lines
     final techPaint = Paint()
-      ..color = AppTheme.primaryCyan.withOpacity(0.1)
+      ..color = AppTheme.primaryCyan.withValues(alpha: 0.1)
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 
@@ -417,17 +479,17 @@ class TelemetryCanvasPainter extends CustomPainter {
 
     // 2. Draw animated targets
     final targetPaint = Paint()
-      ..color = AppTheme.primaryCyan.withOpacity(0.3)
+      ..color = AppTheme.primaryCyan.withValues(alpha: 0.3)
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
 
     final ringRadius = 80 + 10 * sin(value * 2 * 3.1415);
     canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.4), ringRadius, targetPaint);
-    canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.4), 10, Paint()..color = Colors.greenAccent.withOpacity(0.5));
+    canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.4), 10, Paint()..color = Colors.greenAccent.withValues(alpha: 0.5));
 
     // Simulated scanning sweep line
     final sweepPaint = Paint()
-      ..color = AppTheme.primaryCyan.withOpacity(0.08)
+      ..color = AppTheme.primaryCyan.withValues(alpha: 0.08)
       ..strokeWidth = 2.0;
     double sweepY = size.height * value;
     canvas.drawLine(Offset(0, sweepY), Offset(size.width, sweepY), sweepPaint);

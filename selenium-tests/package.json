@@ -1,0 +1,24 @@
+{
+  "name": "smartmed-selenium-tests",
+  "version": "1.0.0",
+  "description": "SmartMed Portal — Selenium WebDriver E2E Test Suite (300+ Test Cases)",
+  "main": "tests/login-tests.js",
+  "scripts": {
+    "test": "npx mocha tests/login-tests.js --timeout 30000 --reporter spec",
+    "test:auth": "npx mocha tests/login-tests.js --grep \"Authentication\" --timeout 30000",
+    "test:dashboard": "npx mocha tests/login-tests.js --grep \"Dashboard\" --timeout 30000",
+    "test:shop": "npx mocha tests/login-tests.js --grep \"Medical Shop\" --timeout 30000",
+    "test:smoke": "npx mocha tests/login-tests.js --grep \"Page Load\" --timeout 15000",
+    "report": "node generate-report.js"
+  },
+  "keywords": ["selenium", "e2e", "testing", "flutter", "smartmed", "medicate"],
+  "author": "SmartMed QA Team",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "chromedriver": "latest",
+    "exceljs": "^4.4.0",
+    "mocha": "^10.4.0",
+    "selenium-webdriver": "^4.21.0"
+  }
+}

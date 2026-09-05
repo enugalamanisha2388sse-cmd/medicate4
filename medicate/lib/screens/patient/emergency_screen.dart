@@ -4,7 +4,7 @@ import '../../core/theme.dart';
 import '../../core/services/services.dart';
 
 class EmergencyScreen extends StatefulWidget {
-  EmergencyScreen({super.key});
+  const EmergencyScreen({super.key});
 
   @override
   State<EmergencyScreen> createState() => _EmergencyScreenState();
@@ -124,7 +124,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> with SingleTickerProv
                               height: 170 + (pulseVal * 50),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.redAccent.withOpacity(0.08 * (1.0 - pulseVal)),
+                                color: Colors.redAccent.withValues(alpha: 0.08 * (1.0 - pulseVal)),
                               ),
                             ),
                             Container(
@@ -132,7 +132,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> with SingleTickerProv
                               height: 150 + (pulseVal * 30),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.redAccent.withOpacity(0.12 * (1.0 - pulseVal)),
+                                color: Colors.redAccent.withValues(alpha: 0.12 * (1.0 - pulseVal)),
                               ),
                             ),
                             // Main button container
@@ -145,7 +145,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> with SingleTickerProv
                                 border: Border.all(color: Colors.redAccent, width: 3),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.redAccent.withOpacity(0.4),
+                                    color: Colors.redAccent.withValues(alpha: 0.4),
                                     blurRadius: _isSosTriggered ? 25 : 12,
                                     spreadRadius: _isSosTriggered ? 4 : 1,
                                   ),
@@ -214,8 +214,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> with SingleTickerProv
                   margin: EdgeInsets.only(bottom: 12),
                   child: GlassCard(
                     radius: 18,
-                    borderColor: Colors.redAccent.withOpacity(0.15),
-                    fillColor: Colors.redAccent.withOpacity(0.02),
+                    borderColor: Colors.redAccent.withValues(alpha: 0.15),
+                    fillColor: Colors.redAccent.withValues(alpha: 0.02),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -230,7 +230,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> with SingleTickerProv
                                   Container(
                                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: hosp.vacancy > 0 ? Colors.green.withOpacity(0.12) : Colors.red.withOpacity(0.12),
+                                      color: hosp.vacancy > 0 ? Colors.green.withValues(alpha: 0.12) : Colors.red.withValues(alpha: 0.12),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -253,7 +253,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> with SingleTickerProv
                           },
                           icon: Icon(Icons.phone_in_talk_rounded, color: Colors.greenAccent),
                           style: IconButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.05),
+                            backgroundColor: Colors.white.withValues(alpha: 0.05),
                             padding: EdgeInsets.all(12),
                           ),
                         ),
@@ -295,7 +295,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> with SingleTickerProv
                       decoration: BoxDecoration(
                         color: isSelected ? AppTheme.primaryCyan : AppTheme.cardColor,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: isSelected ? AppTheme.primaryCyan.withOpacity(0.5) : AppTheme.borderCard),
+                        border: Border.all(color: isSelected ? AppTheme.primaryCyan.withValues(alpha: 0.5) : AppTheme.borderCard),
                       ),
                       child: Row(
                         children: [
@@ -321,8 +321,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> with SingleTickerProv
             // Guide Details Card
             GlassCard(
               radius: 20,
-              borderColor: AppTheme.primaryCyan.withOpacity(0.15),
-              fillColor: AppTheme.primaryCyan.withOpacity(0.02),
+              borderColor: AppTheme.primaryCyan.withValues(alpha: 0.15),
+              fillColor: AppTheme.primaryCyan.withValues(alpha: 0.02),
               child: CrossFadeGuide(
                 title: _firstAidGuides[_firstAidIndex]['title']!,
                 steps: _firstAidGuides[_firstAidIndex]['steps']!,
@@ -340,7 +340,7 @@ class CrossFadeGuide extends StatelessWidget {
   final String title;
   final String steps;
 
-  CrossFadeGuide({super.key, required this.title, required this.steps});
+  const CrossFadeGuide({super.key, required this.title, required this.steps});
 
   @override
   Widget build(BuildContext context) {
@@ -353,7 +353,7 @@ class CrossFadeGuide extends StatelessWidget {
             Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.textPrimary)),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(color: AppTheme.primaryCyan.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+              decoration: BoxDecoration(color: AppTheme.primaryCyan.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
               child: Text('Verified Protocol', style: TextStyle(color: AppTheme.primaryCyan, fontSize: 9, fontWeight: FontWeight.bold)),
             ),
           ],

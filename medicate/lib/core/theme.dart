@@ -29,8 +29,8 @@ class AppTheme {
   static const Color _cardLight = Color(0xFFFFFFFF);
   static const Color _cardDark  = Color(0xFF1E293B);
 
-  static const Color _textPrimaryLight   = Color(0xFF1E293B);
-  static const Color _textPrimaryDark    = Color(0xFFF8FAFC);
+  static const Color _textPrimaryLight   = Color(0xFF000000);
+  static const Color _textPrimaryDark    = Color(0xFFFFFFFF);
   static const Color _textSecondaryLight = Color(0xFF64748B);
   static const Color _textSecondaryDark  = Color(0xFF94A3B8);
   static const Color _textHint           = Color(0xFF94A3B8);
@@ -236,8 +236,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: _error, width: 2),
         ),
-        labelStyle: GoogleFonts.poppins(color: _textSecondaryLight, fontSize: 14),
-        hintStyle: GoogleFonts.poppins(color: _textHint, fontSize: 14),
+        labelStyle: GoogleFonts.poppins(color: _textPrimaryLight, fontSize: 14),
+        hintStyle: GoogleFonts.poppins(color: _textPrimaryLight.withValues(alpha: 0.6), fontSize: 14),
         prefixIconColor: _primaryBlueLight,
       ),
       cardTheme: CardThemeData(
@@ -414,8 +414,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFF87171), width: 2),
         ),
-        labelStyle: GoogleFonts.poppins(color: _textSecondaryDark, fontSize: 14),
-        hintStyle: GoogleFonts.poppins(color: _textHint, fontSize: 14),
+        labelStyle: GoogleFonts.poppins(color: _textPrimaryDark, fontSize: 14),
+        hintStyle: GoogleFonts.poppins(color: _textPrimaryDark.withValues(alpha: 0.6), fontSize: 14),
         prefixIconColor: _primaryBlueDark,
       ),
       cardTheme: CardThemeData(
@@ -503,7 +503,7 @@ class AppTheme {
         ? []
         : [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -516,7 +516,7 @@ class AppTheme {
     border: Border.all(color: border, width: 1),
     boxShadow: [
       BoxShadow(
-        color: (_isDark ? Colors.black : Colors.black).withOpacity(_isDark ? 0.3 : 0.08),
+        color: (_isDark ? Colors.black : Colors.black).withValues(alpha: _isDark ? 0.3 : 0.08),
         blurRadius: 24,
         offset: const Offset(0, 8),
       ),
@@ -528,7 +528,7 @@ class AppTheme {
     borderRadius: BorderRadius.circular(radius),
     boxShadow: [
       BoxShadow(
-        color: primaryBlue.withOpacity(0.3),
+        color: primaryBlue.withValues(alpha: 0.3),
         blurRadius: 20,
         offset: const Offset(0, 8),
       ),
@@ -536,19 +536,19 @@ class AppTheme {
   );
 
   static BoxDecoration get glassDecoration => BoxDecoration(
-    color: cardColor.withOpacity(_isDark ? 0.08 : 0.72),
+    color: cardColor.withValues(alpha: _isDark ? 0.08 : 0.72),
     borderRadius: BorderRadius.circular(20),
     border: Border.all(
       color: _isDark
-          ? Colors.white.withOpacity(0.08)
-          : Colors.black.withOpacity(0.06),
+          ? Colors.white.withValues(alpha: 0.08)
+          : Colors.black.withValues(alpha: 0.06),
       width: 1.2,
     ),
     boxShadow: _isDark
         ? []
         : [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -567,8 +567,8 @@ class AppTheme {
       hintText: hint,
       prefixIcon: Icon(icon, size: 20, color: iconColor ?? primaryBlue),
       suffixIcon: suffixIcon,
-      labelStyle: GoogleFonts.poppins(color: textSecondary, fontSize: 14),
-      hintStyle: GoogleFonts.poppins(color: textHint, fontSize: 13),
+      labelStyle: GoogleFonts.poppins(color: textPrimary, fontSize: 14),
+      hintStyle: GoogleFonts.poppins(color: textPrimary.withValues(alpha: 0.6), fontSize: 13),
       filled: true,
       fillColor: _isDark ? const Color(0xFF0F172A) : _bgLight,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -683,7 +683,7 @@ class SmartMedCard extends StatelessWidget {
             ? []
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(elevated ? 0.10 : 0.05),
+                  color: Colors.black.withValues(alpha: elevated ? 0.10 : 0.05),
                   blurRadius: elevated ? 24 : 16,
                   offset: Offset(0, elevated ? 8 : 4),
                 ),
@@ -729,9 +729,9 @@ class StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -821,7 +821,7 @@ class AppSearchBar extends StatelessWidget {
         border: Border.all(color: AppTheme.border),
         boxShadow: AppTheme.isDark ? [] : [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 12,
             offset: const Offset(0, 2),
           ),
@@ -878,7 +878,7 @@ class EmptyStateWidget extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.1),
+                color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, size: 36, color: AppTheme.primaryBlue),
@@ -950,7 +950,7 @@ class GlassCard extends StatelessWidget {
                 ? []
                 : [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -1076,7 +1076,7 @@ class _PulsingCircleState extends State<PulsingCircle> with SingleTickerProvider
               height: widget.size * _animation.value,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: widget.color.withOpacity(0.2 * (1 - (_animation.value - 1) / 0.4)),
+                color: widget.color.withValues(alpha: 0.2 * (1 - (_animation.value - 1) / 0.4)),
               ),
             ),
             child!,
@@ -1115,12 +1115,12 @@ class MobileViewFrame extends StatelessWidget {
             border: Border.all(color: const Color(0xFF1E293B), width: 10),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.primaryBlue.withOpacity(0.25),
+                color: AppTheme.primaryBlue.withValues(alpha: 0.25),
                 blurRadius: 40,
                 spreadRadius: 4,
               ),
               BoxShadow(
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withValues(alpha: 0.7),
                 blurRadius: 20,
                 offset: const Offset(0, 12),
               ),
@@ -1149,13 +1149,13 @@ class NeonBlobPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final p1 = Paint()
-      ..color = AppTheme.primaryBlue.withOpacity(0.08)
+      ..color = AppTheme.primaryBlue.withValues(alpha: 0.08)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 60);
     final p2 = Paint()
-      ..color = AppTheme.primaryIndigo.withOpacity(0.07)
+      ..color = AppTheme.primaryIndigo.withValues(alpha: 0.07)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 70);
     final p3 = Paint()
-      ..color = AppTheme.primaryPurple.withOpacity(0.05)
+      ..color = AppTheme.primaryPurple.withValues(alpha: 0.05)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 80);
 
     canvas.drawCircle(
@@ -1186,19 +1186,11 @@ class DynamicBackground extends StatefulWidget {
 
 class _DynamicBackgroundState extends State<DynamicBackground> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late List<StarNode> _stars;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: const Duration(seconds: 24))..repeat();
-    final rng = Random();
-    _stars = List.generate(20, (_) => StarNode(
-      x: rng.nextDouble() * 450,
-      y: rng.nextDouble() * 900,
-      size: 0.8 + rng.nextDouble() * 1.5,
-      speed: 0.06 + rng.nextDouble() * 0.12,
-    ));
   }
 
   @override
@@ -1214,7 +1206,7 @@ class _DynamicBackgroundState extends State<DynamicBackground> with SingleTicker
         Container(color: AppTheme.background),
         AnimatedBuilder(
           animation: _controller,
-          builder: (_, __) => CustomPaint(
+          builder: (context, child) => CustomPaint(
             size: Size.infinite,
             painter: NeonBlobPainter(_controller.value),
           ),

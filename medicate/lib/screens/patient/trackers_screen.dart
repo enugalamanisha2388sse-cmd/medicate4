@@ -4,7 +4,7 @@ import '../../core/theme.dart';
 import '../../core/services/services.dart';
 
 class TrackersScreen extends StatefulWidget {
-  TrackersScreen({super.key});
+  const TrackersScreen({super.key});
 
   @override
   State<TrackersScreen> createState() => _TrackersScreenState();
@@ -140,7 +140,7 @@ class _TrackersScreenState extends State<TrackersScreen> with SingleTickerProvid
           SizedBox(height: 12),
           GlassCard(
             radius: 20,
-            borderColor: AppTheme.primaryCyan.withOpacity(0.15),
+            borderColor: AppTheme.primaryCyan.withValues(alpha: 0.15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -151,7 +151,7 @@ class _TrackersScreenState extends State<TrackersScreen> with SingleTickerProvid
                     hintText: 'What symptoms are you experiencing?',
                     hintStyle: TextStyle(color: AppTheme.textSecondary),
                     filled: true,
-                    fillColor: Colors.black.withOpacity(0.15),
+                    fillColor: Colors.black.withValues(alpha: 0.15),
                     enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.borderCard)),
                     focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.primaryCyan)),
                   ),
@@ -238,9 +238,9 @@ class _TrackersScreenState extends State<TrackersScreen> with SingleTickerProvid
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: Colors.redAccent.withOpacity(0.12),
+                            color: Colors.redAccent.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
+                            border: Border.all(color: Colors.redAccent.withValues(alpha: 0.3)),
                           ),
                           child: Text(
                             'S:${log.severity.toInt()}',
@@ -300,7 +300,7 @@ class _TrackersScreenState extends State<TrackersScreen> with SingleTickerProvid
                         borderRadius: BorderRadius.circular(4),
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.primaryCyan.withOpacity(0.3),
+                            color: AppTheme.primaryCyan.withValues(alpha: 0.3),
                             blurRadius: 6,
                             spreadRadius: 1,
                           ),
@@ -332,7 +332,7 @@ class _TrackersScreenState extends State<TrackersScreen> with SingleTickerProvid
           SizedBox(height: 12),
           GlassCard(
             radius: 20,
-            borderColor: AppTheme.primaryIndigo.withOpacity(0.15),
+            borderColor: AppTheme.primaryIndigo.withValues(alpha: 0.15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -402,8 +402,8 @@ class _TrackersScreenState extends State<TrackersScreen> with SingleTickerProvid
                   margin: EdgeInsets.only(bottom: 10),
                   child: GlassCard(
                     radius: 16,
-                    borderColor: rem.isTaken ? Colors.green.withOpacity(0.2) : AppTheme.borderCard,
-                    fillColor: rem.isTaken ? Colors.green.withOpacity(0.04) : Color(0x0AFFFFFF),
+                    borderColor: rem.isTaken ? Colors.green.withValues(alpha: 0.2) : AppTheme.borderCard,
+                    fillColor: rem.isTaken ? Colors.green.withValues(alpha: 0.04) : Color(0x0AFFFFFF),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -455,7 +455,7 @@ class _TrackersScreenState extends State<TrackersScreen> with SingleTickerProvid
       labelStyle: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
       prefixIcon: Icon(icon, color: AppTheme.primaryCyan, size: 18),
       filled: true,
-      fillColor: Colors.black.withOpacity(0.15),
+      fillColor: Colors.black.withValues(alpha: 0.15),
       enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.borderCard)),
       focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppTheme.primaryCyan)),
     );

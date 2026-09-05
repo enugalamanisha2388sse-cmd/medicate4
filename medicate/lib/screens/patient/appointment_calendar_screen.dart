@@ -7,7 +7,7 @@ import 'gate_pass_screen.dart';
 class AppointmentCalendarScreen extends StatefulWidget {
   final String? initialDoctor;
   final String? initialDepartment;
-  AppointmentCalendarScreen({super.key, this.initialDoctor, this.initialDepartment});
+  const AppointmentCalendarScreen({super.key, this.initialDoctor, this.initialDepartment});
 
   @override
   State<AppointmentCalendarScreen> createState() =>
@@ -139,7 +139,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
         backgroundColor: AppTheme.cardColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: BorderSide(color: AppTheme.primaryTeal.withOpacity(0.3)),
+          side: BorderSide(color: AppTheme.primaryTeal.withValues(alpha: 0.3)),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -149,7 +149,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.primaryTeal.withOpacity(0.1),
+                color: AppTheme.primaryTeal.withValues(alpha: 0.1),
               ),
               child: Icon(
                 Icons.check_circle_rounded,
@@ -343,14 +343,14 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                           ? AppTheme.primaryTeal
                           : AppTheme.borderCard,
                       fillColor: isSel
-                          ? AppTheme.primaryTeal.withOpacity(0.04)
+                          ? AppTheme.primaryTeal.withValues(alpha: 0.04)
                           : Color(0x0AFFFFFF),
                       child: Row(
                         children: [
                           CircleAvatar(
                             radius: 24,
-                            backgroundColor: AppTheme.primaryTeal.withOpacity(
-                              0.1,
+                            backgroundColor: AppTheme.primaryTeal.withValues(
+                              alpha: 0.1,
                             ),
                             child: Icon(
                               Icons.person,
@@ -507,7 +507,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                     duration: Duration(milliseconds: 200),
                     decoration: BoxDecoration(
                       color: isSel
-                          ? AppTheme.primaryCyan.withOpacity(0.2)
+                          ? AppTheme.primaryCyan.withValues(alpha: 0.2)
                           : AppTheme.cardColor,
                       border: Border.all(
                         color: isSel
@@ -646,7 +646,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: statusColor.withOpacity(0.12),
+                                  color: statusColor.withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(
@@ -796,8 +796,8 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
       builder: (context) {
         return GlassCard(
           radius: 30,
-          borderColor: AppTheme.primaryTeal.withOpacity(0.3),
-          fillColor: AppTheme.background.withOpacity(0.98),
+          borderColor: AppTheme.primaryTeal.withValues(alpha: 0.3),
+          fillColor: AppTheme.background.withValues(alpha: 0.98),
           child: Padding(
             padding: EdgeInsets.symmetric(
               horizontal: 24.0,
@@ -812,7 +812,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                     width: 50,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: AppTheme.textSecondary.withOpacity(0.3),
+                      color: AppTheme.textSecondary.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -822,7 +822,7 @@ class _AppointmentCalendarScreenState extends State<AppointmentCalendarScreen> {
                   children: [
                     CircleAvatar(
                       radius: 30,
-                      backgroundColor: AppTheme.primaryTeal.withOpacity(0.15),
+                      backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.15),
                       child: Icon(
                         Icons.person,
                         color: AppTheme.primaryCyan,

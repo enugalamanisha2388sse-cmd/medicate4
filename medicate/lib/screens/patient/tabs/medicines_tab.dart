@@ -61,7 +61,7 @@ class _MedicinesTabState extends State<MedicinesTab> with SingleTickerProviderSt
                 Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: AppTheme.border, borderRadius: BorderRadius.circular(4)))),
                 const SizedBox(height: 20),
                 Row(children: [
-                  Container(width: 44, height: 44, decoration: BoxDecoration(color: AppTheme.primaryPurple.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                  Container(width: 44, height: 44, decoration: BoxDecoration(color: AppTheme.primaryPurple.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
                     child: Icon(Icons.alarm_add_rounded, color: AppTheme.primaryPurple, size: 22)),
                   const SizedBox(width: 12),
                   Text('Add Medicine Reminder', style: AppTextStyles.heading3()),
@@ -160,7 +160,7 @@ class _MedicinesTabState extends State<MedicinesTab> with SingleTickerProviderSt
                   Container(
                     width: 42, height: 42,
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryPurple.withOpacity(0.12),
+                      color: AppTheme.primaryPurple.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(Icons.medication_rounded, color: AppTheme.primaryPurple, size: 22),
@@ -222,7 +222,7 @@ class _MedicinesTabState extends State<MedicinesTab> with SingleTickerProviderSt
       ),
       floatingActionButton: AnimatedBuilder(
         animation: _subTabController,
-        builder: (_, __) => _subTabController.index == 0
+        builder: (context, child) => _subTabController.index == 0
             ? FloatingActionButton.extended(
                 onPressed: () => _showAddReminderSheet(context, provider),
                 backgroundColor: AppTheme.primaryPurple,
@@ -248,7 +248,7 @@ class _MedicinesTabState extends State<MedicinesTab> with SingleTickerProviderSt
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
       itemCount: reminders.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      separatorBuilder: (context, index) => const SizedBox(height: 10),
       itemBuilder: (_, i) {
         final rem = reminders[i];
         final isTaken = rem.isTaken;
@@ -260,8 +260,8 @@ class _MedicinesTabState extends State<MedicinesTab> with SingleTickerProviderSt
             decoration: BoxDecoration(
               color: AppTheme.cardColor,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: isTaken ? AppTheme.success.withOpacity(0.3) : AppTheme.border),
-              boxShadow: AppTheme.isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 3))],
+              border: Border.all(color: isTaken ? AppTheme.success.withValues(alpha: 0.3) : AppTheme.border),
+              boxShadow: AppTheme.isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 3))],
             ),
             child: Padding(
               padding: const EdgeInsets.all(14),
@@ -270,7 +270,7 @@ class _MedicinesTabState extends State<MedicinesTab> with SingleTickerProviderSt
                   Container(
                     width: 48, height: 48,
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.12),
+                      color: color.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(
@@ -296,9 +296,9 @@ class _MedicinesTabState extends State<MedicinesTab> with SingleTickerProviderSt
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: color.withOpacity(0.12),
+                        color: color.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: color.withOpacity(0.3)),
+                        border: Border.all(color: color.withValues(alpha: 0.3)),
                       ),
                       child: Text(
                         isTaken ? 'Taken ✓' : 'Mark Taken',
@@ -335,9 +335,9 @@ class _MedicinesTabState extends State<MedicinesTab> with SingleTickerProviderSt
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: AppTheme.info.withOpacity(0.08),
+              color: AppTheme.info.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppTheme.info.withOpacity(0.25)),
+              border: Border.all(color: AppTheme.info.withValues(alpha: 0.25)),
             ),
             child: Row(children: [
               Icon(Icons.science_outlined, color: AppTheme.info, size: 20),
@@ -379,7 +379,7 @@ class _MedicinesTabState extends State<MedicinesTab> with SingleTickerProviderSt
           Center(child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: AppTheme.primaryPurple.withOpacity(0.1),
+              color: AppTheme.primaryPurple.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text('vs', style: GoogleFonts.poppins(color: AppTheme.primaryPurple, fontWeight: FontWeight.w700, fontSize: 14)),
@@ -516,9 +516,9 @@ class _InteractionResultCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.06),
+        color: color.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -560,9 +560,9 @@ class _InventoryCard extends StatelessWidget {
         color: AppTheme.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isExpired ? AppTheme.error.withOpacity(0.4) : (isLow ? AppTheme.warning.withOpacity(0.4) : AppTheme.border),
+          color: isExpired ? AppTheme.error.withValues(alpha: 0.4) : (isLow ? AppTheme.warning.withValues(alpha: 0.4) : AppTheme.border),
         ),
-        boxShadow: AppTheme.isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 3))],
+        boxShadow: AppTheme.isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 3))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -572,7 +572,7 @@ class _InventoryCard extends StatelessWidget {
               Container(
                 width: 42, height: 42,
                 decoration: BoxDecoration(
-                  color: barColor.withOpacity(0.12),
+                  color: barColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(Icons.medication_liquid_rounded, color: barColor, size: 22),
@@ -644,7 +644,7 @@ class _MiniChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(label, style: GoogleFonts.poppins(fontSize: 9, fontWeight: FontWeight.w700, color: color)),
@@ -664,9 +664,9 @@ class _AlertBanner extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(children: [
         Icon(icon, color: color, size: 18),
@@ -675,10 +675,4 @@ class _AlertBanner extends StatelessWidget {
       ]),
     );
   }
-}
-
-// Private const access helpers
-extension _AppThemeAccess on AppTheme {
-  static const Color _error = Color(0xFFEF4444);
-  static const Color _warning = Color(0xFFF59E0B);
 }

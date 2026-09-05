@@ -35,9 +35,9 @@ class ProfileTab extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           gradient: LinearGradient(
-                            colors: [Colors.white.withOpacity(0.3), Colors.white.withOpacity(0.1)],
+                            colors: [Colors.white.withValues(alpha: 0.3), Colors.white.withValues(alpha: 0.1)],
                           ),
-                          border: Border.all(color: Colors.white.withOpacity(0.5), width: 2.5),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.5), width: 2.5),
                         ),
                         child: Center(
                           child: Text(
@@ -52,7 +52,7 @@ class ProfileTab extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -61,7 +61,7 @@ class ProfileTab extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(user.email, style: GoogleFonts.poppins(color: Colors.white.withOpacity(0.75), fontSize: 13)),
+                      Text(user.email, style: GoogleFonts.poppins(color: Colors.white.withValues(alpha: 0.75), fontSize: 13)),
                     ],
                   ),
                 ),
@@ -357,7 +357,7 @@ class _ProfileListTile extends StatelessWidget {
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
     leading: Container(
       width: 40, height: 40,
-      decoration: BoxDecoration(color: iconColor.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(color: iconColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
       child: Icon(icon, color: iconColor, size: 20),
     ),
     title: Text(title, style: AppTextStyles.labelLarge()),
@@ -380,14 +380,14 @@ class _SwitchListTile extends StatelessWidget {
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
     leading: Container(
       width: 40, height: 40,
-      decoration: BoxDecoration(color: iconColor.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(color: iconColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
       child: Icon(icon, color: iconColor, size: 20),
     ),
     title: Text(title, style: AppTextStyles.labelLarge()),
     trailing: Switch(
       value: value,
       onChanged: onChanged,
-      activeColor: AppTheme.primaryBlue,
+      activeThumbColor: AppTheme.primaryBlue,
     ),
   );
 }

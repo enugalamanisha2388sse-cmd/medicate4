@@ -4,7 +4,7 @@ import '../../core/theme.dart';
 import '../../core/services/services.dart';
 
 class DeliveryTrackerScreen extends StatelessWidget {
-  DeliveryTrackerScreen({super.key});
+  const DeliveryTrackerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +30,8 @@ class DeliveryTrackerScreen extends StatelessWidget {
                 flex: 3,
                 child: GlassCard(
                   radius: 24,
-                  borderColor: AppTheme.primaryCyan.withOpacity(0.2),
-                  fillColor: Colors.black.withOpacity(0.4),
+                  borderColor: AppTheme.primaryCyan.withValues(alpha: 0.2),
+                  fillColor: Colors.black.withValues(alpha: 0.4),
                   padding: EdgeInsets.zero,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(24),
@@ -100,7 +100,7 @@ class DeliveryTrackerScreen extends StatelessWidget {
                         child: LinearProgressIndicator(
                           value: progress,
                           minHeight: 8,
-                          backgroundColor: Colors.white.withOpacity(0.05),
+                          backgroundColor: Colors.white.withValues(alpha: 0.05),
                           valueColor: AlwaysStoppedAnimation<Color>(
                             status == 'Delivered' ? Colors.greenAccent : AppTheme.primaryCyan,
                           ),
@@ -160,7 +160,7 @@ class RouteTrackerPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // 1. Grid
     final gridPaint = Paint()
-      ..color = AppTheme.borderCard.withOpacity(0.2)
+      ..color = AppTheme.borderCard.withValues(alpha: 0.2)
       ..strokeWidth = 0.8;
     for (double i = 0; i < size.width; i += 20) {
       canvas.drawLine(Offset(i, 0), Offset(i, size.height), gridPaint);
@@ -171,7 +171,7 @@ class RouteTrackerPainter extends CustomPainter {
 
     // 2. Dash line track path
     final trackPaint = Paint()
-      ..color = AppTheme.primaryCyan.withOpacity(0.15)
+      ..color = AppTheme.primaryCyan.withValues(alpha: 0.15)
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke;
 
@@ -188,7 +188,7 @@ class RouteTrackerPainter extends CustomPainter {
 
     // Pulse ripple for drone
     final pulsePaint = Paint()
-      ..color = AppTheme.primaryCyan.withOpacity(0.3 * (1 - (progress % 0.2) / 0.2))
+      ..color = AppTheme.primaryCyan.withValues(alpha: 0.3 * (1 - (progress % 0.2) / 0.2))
       ..style = PaintingStyle.fill;
     canvas.drawCircle(currentPos, 20 * ((progress % 0.2) / 0.2), pulsePaint);
 
@@ -200,7 +200,7 @@ class RouteTrackerPainter extends CustomPainter {
     
     // Draw crosshair corners around drone
     final crossPaint = Paint()
-      ..color = Colors.white.withOpacity(0.6)
+      ..color = Colors.white.withValues(alpha: 0.6)
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
     canvas.drawRect(Rect.fromCenter(center: currentPos, width: 14, height: 14), crossPaint);

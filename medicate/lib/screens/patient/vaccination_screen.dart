@@ -4,7 +4,7 @@ import '../../core/theme.dart';
 import '../../core/services/services.dart';
 
 class VaccinationScreen extends StatefulWidget {
-  VaccinationScreen({super.key});
+  const VaccinationScreen({super.key});
 
   @override
   State<VaccinationScreen> createState() => _VaccinationScreenState();
@@ -31,7 +31,7 @@ class _VaccinationScreenState extends State<VaccinationScreen> {
             backgroundColor: AppTheme.cardColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
-              side: BorderSide(color: AppTheme.primaryTeal.withOpacity(0.3)),
+              side: BorderSide(color: AppTheme.primaryTeal.withValues(alpha: 0.3)),
             ),
             title: Row(
               children: [
@@ -54,7 +54,7 @@ class _VaccinationScreenState extends State<VaccinationScreen> {
                   SizedBox(height: 8),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(color: Colors.black.withOpacity(0.2), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.borderCard)),
+                    decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.borderCard)),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: _selectedLocation,
@@ -236,13 +236,13 @@ class _VaccinationScreenState extends State<VaccinationScreen> {
                   margin: EdgeInsets.only(bottom: 12),
                   child: GlassCard(
                     radius: 20,
-                    borderColor: tagColor.withOpacity(0.15),
-                    fillColor: tagColor.withOpacity(0.01),
+                    borderColor: tagColor.withValues(alpha: 0.15),
+                    fillColor: tagColor.withValues(alpha: 0.01),
                     child: Row(
                       children: [
                         CircleAvatar(
                           radius: 22,
-                          backgroundColor: tagColor.withOpacity(0.1),
+                          backgroundColor: tagColor.withValues(alpha: 0.1),
                           child: Icon(statusIcon, color: tagColor, size: 22),
                         ),
                         SizedBox(width: 16),
@@ -278,7 +278,7 @@ class _VaccinationScreenState extends State<VaccinationScreen> {
                         else
                           Container(
                             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(color: tagColor.withOpacity(0.12), borderRadius: BorderRadius.circular(10)),
+                            decoration: BoxDecoration(color: tagColor.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
                             child: Text(
                               vac.status.toUpperCase(),
                               style: TextStyle(color: tagColor, fontWeight: FontWeight.bold, fontSize: 10),
@@ -304,8 +304,8 @@ class _VaccinationScreenState extends State<VaccinationScreen> {
 
     return GlassCard(
       radius: 24,
-      borderColor: AppTheme.primaryTeal.withOpacity(0.15),
-      fillColor: AppTheme.primaryTeal.withOpacity(0.02),
+      borderColor: AppTheme.primaryTeal.withValues(alpha: 0.15),
+      fillColor: AppTheme.primaryTeal.withValues(alpha: 0.02),
       child: Row(
         children: [
           Expanded(
@@ -324,7 +324,7 @@ class _VaccinationScreenState extends State<VaccinationScreen> {
                   child: LinearProgressIndicator(
                     value: progressVal,
                     minHeight: 6,
-                    backgroundColor: Colors.white.withOpacity(0.05),
+                    backgroundColor: Colors.white.withValues(alpha: 0.05),
                     valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryCyan),
                   ),
                 )

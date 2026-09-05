@@ -6,7 +6,8 @@ import '../../core/services/services.dart';
 
 
 class BluetoothVitalsScreen extends StatefulWidget {
-  BluetoothVitalsScreen({super.key});
+  final bool isTab;
+  BluetoothVitalsScreen({super.key, this.isTab = false});
 
   @override
   State<BluetoothVitalsScreen> createState() => _BluetoothVitalsScreenState();
@@ -34,43 +35,45 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
 
     // If connected, automatically switch or allow switching tabs.
     // If not connected, we prompt pairing first but let them browse.
-    return MobileViewFrame(
-      child: Scaffold(
-        backgroundColor: AppTheme.background,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new, color: AppTheme.textPrimary),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: Text(
-            'Smart Sensor Hub',
-            style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          bottom: TabBar(
-            controller: _tabController,
-            indicatorColor: AppTheme.primaryCyan,
-            dividerColor: AppTheme.borderCard,
-            labelColor: AppTheme.primaryCyan,
-            unselectedLabelColor: AppTheme.textSecondary,
-            tabs: [
-              Tab(icon: Icon(Icons.bluetooth_searching_rounded), text: 'DEVICE PAIRING'),
-              Tab(icon: Icon(Icons.health_and_safety_rounded), text: 'LIVE TELEMETRY'),
-            ],
-          ),
+    final scaffold = Scaffold(
+      backgroundColor: AppTheme.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: widget.isTab
+            ? null
+            : IconButton(
+                icon: Icon(Icons.arrow_back_ios_new, color: AppTheme.textPrimary),
+                onPressed: () => Navigator.pop(context),
+              ),
+        title: Text(
+          'Smart Sensor Hub',
+          style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        body: DynamicBackground(
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildPairingTab(context, provider),
-              _buildTelemetryTab(context, provider),
-            ],
-          ),
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: AppTheme.primaryCyan,
+          dividerColor: AppTheme.borderCard,
+          labelColor: AppTheme.primaryCyan,
+          unselectedLabelColor: AppTheme.textSecondary,
+          tabs: [
+            Tab(icon: Icon(Icons.bluetooth_searching_rounded), text: 'DEVICE PAIRING'),
+            Tab(icon: Icon(Icons.health_and_safety_rounded), text: 'LIVE TELEMETRY'),
+          ],
+        ),
+      ),
+      body: DynamicBackground(
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildPairingTab(context, provider),
+            _buildTelemetryTab(context, provider),
+          ],
         ),
       ),
     );
+
+    return widget.isTab ? scaffold : MobileViewFrame(child: scaffold);
   }
 
   // ==========================================
@@ -132,8 +135,8 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
     return FadeInSlide(
       child: GlassCard(
         radius: 24,
-        borderColor: AppTheme.primaryCyan.withOpacity(0.3),
-        fillColor: AppTheme.primaryCyan.withOpacity(0.04),
+        borderColor: AppTheme.primaryCyan.withValues(alpha: 0.3),
+        fillColor: AppTheme.primaryCyan.withValues(alpha: 0.04),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -143,10 +146,10 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppTheme.primaryCyan.withOpacity(0.12),
+                    color: AppTheme.primaryCyan.withValues(alpha: 0.12),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primaryCyan.withOpacity(0.2),
+                        color: AppTheme.primaryCyan.withValues(alpha: 0.2),
                         blurRadius: 8,
                       )
                     ]
@@ -238,7 +241,7 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
   Widget _buildConnectingCard(MedicateProvider provider) {
     return GlassCard(
       radius: 20,
-      borderColor: AppTheme.primaryIndigo.withOpacity(0.3),
+      borderColor: AppTheme.primaryIndigo.withValues(alpha: 0.3),
       child: Center(
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 24.0),
@@ -282,7 +285,7 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
               child: Center(
                 child: Column(
                   children: [
-                    Icon(Icons.bluetooth_disabled_rounded, color: AppTheme.textSecondary.withOpacity(0.5), size: 48),
+                    Icon(Icons.bluetooth_disabled_rounded, color: AppTheme.textSecondary.withValues(alpha: 0.5), size: 48),
                     SizedBox(height: 16),
                     Text(
                       'No Connected Accessories',
@@ -341,7 +344,7 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.04),
+                          color: Colors.white.withValues(alpha: 0.04),
                         ),
                         child: Icon(
                           isWatch ? Icons.watch_rounded : Icons.trip_origin_rounded,
@@ -366,7 +369,7 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
                       ElevatedButton(
                         onPressed: () => provider.connectDevice(dev),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.08),
+                          backgroundColor: Colors.white.withValues(alpha: 0.08),
                           foregroundColor: AppTheme.textPrimary,
                           elevation: 0,
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -411,7 +414,7 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.bluetooth_disabled_rounded, size: 54, color: AppTheme.textSecondary.withOpacity(0.4)),
+              Icon(Icons.bluetooth_disabled_rounded, size: 54, color: AppTheme.textSecondary.withValues(alpha: 0.4)),
               SizedBox(height: 20),
               Text(
                 'No Wearable Connection',
@@ -451,9 +454,9 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.greenAccent.withOpacity(0.03),
+              color: Colors.greenAccent.withValues(alpha: 0.03),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: Colors.greenAccent.withOpacity(0.2), width: 1.2),
+              border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.2), width: 1.2),
             ),
             child: Row(
               children: [
@@ -489,8 +492,8 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
   Widget _buildECGCard(MedicateProvider provider) {
     return GlassCard(
       radius: 24,
-      borderColor: AppTheme.primaryCyan.withOpacity(0.2),
-      fillColor: Colors.black.withOpacity(0.2),
+      borderColor: AppTheme.primaryCyan.withValues(alpha: 0.2),
+      fillColor: Colors.black.withValues(alpha: 0.2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -553,9 +556,9 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.greenAccent.withOpacity(0.12),
+                      color: Colors.greenAccent.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.greenAccent.withOpacity(0.25)),
+                      border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.25)),
                     ),
                     child: Text(
                       'Normal Sinus',
@@ -615,8 +618,8 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
 
     return GlassCard(
       radius: 24,
-      borderColor: AppTheme.primaryPurple.withOpacity(0.25),
-      fillColor: Colors.black.withOpacity(0.2),
+      borderColor: AppTheme.primaryPurple.withValues(alpha: 0.25),
+      fillColor: Colors.black.withValues(alpha: 0.2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -671,9 +674,9 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.12),
+                      color: statusColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: statusColor.withOpacity(0.25)),
+                      border: Border.all(color: statusColor.withValues(alpha: 0.25)),
                     ),
                     child: Text(
                       status,
@@ -712,7 +715,7 @@ class _BluetoothVitalsScreenState extends State<BluetoothVitalsScreen> with Sing
 // RADAR RADIAL SCANNING EFFECT
 // ==========================================
 class RadarWidget extends StatefulWidget {
-  RadarWidget({super.key});
+  const RadarWidget({super.key});
 
   @override
   State<RadarWidget> createState() => _RadarWidgetState();
@@ -761,7 +764,7 @@ class RadarPainter extends CustomPainter {
 
     // Grid Painter
     final gridPaint = Paint()
-      ..color = AppTheme.primaryCyan.withOpacity(0.1)
+      ..color = AppTheme.primaryCyan.withValues(alpha: 0.1)
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 
@@ -794,8 +797,8 @@ class RadarPainter extends CustomPainter {
       startAngle: angle - 0.6,
       endAngle: angle,
       colors: [
-        AppTheme.primaryCyan.withOpacity(0.0),
-        AppTheme.primaryCyan.withOpacity(0.25),
+        AppTheme.primaryCyan.withValues(alpha: 0.0),
+        AppTheme.primaryCyan.withValues(alpha: 0.25),
       ],
       stops: [0.0, 1.0],
     );
@@ -816,7 +819,7 @@ class RadarPainter extends CustomPainter {
       ..color = AppTheme.primaryCyan
       ..style = PaintingStyle.fill;
     final outerRingPaint = Paint()
-      ..color = AppTheme.primaryCyan.withOpacity(0.35 - (sweepProgress % 0.5) * 0.7)
+      ..color = AppTheme.primaryCyan.withValues(alpha: 0.35 - (sweepProgress % 0.5) * 0.7)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
 
@@ -833,7 +836,7 @@ class RadarPainter extends CustomPainter {
 // ==========================================
 class GlucoseTrendCanvas extends StatelessWidget {
   final List<double> history;
-  GlucoseTrendCanvas({super.key, required this.history});
+  const GlucoseTrendCanvas({super.key, required this.history});
 
   @override
   Widget build(BuildContext context) {
@@ -853,7 +856,7 @@ class GlucoseTrendPainter extends CustomPainter {
     if (history.isEmpty) return;
 
     final gridPaint = Paint()
-      ..color = Colors.white.withOpacity(0.04)
+      ..color = Colors.white.withValues(alpha: 0.04)
       ..strokeWidth = 0.8;
 
     // Draw background grid lines
@@ -919,8 +922,8 @@ class GlucoseTrendPainter extends CustomPainter {
     final fillPaint = Paint()
       ..shader = LinearGradient(
         colors: [
-          AppTheme.primaryPurple.withOpacity(0.25),
-          AppTheme.primaryPurple.withOpacity(0.0),
+          AppTheme.primaryPurple.withValues(alpha: 0.25),
+          AppTheme.primaryPurple.withValues(alpha: 0.0),
         ],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
@@ -937,7 +940,7 @@ class GlucoseTrendPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final shadowPaint = Paint()
-      ..color = AppTheme.primaryPurple.withOpacity(0.3)
+      ..color = AppTheme.primaryPurple.withValues(alpha: 0.3)
       ..strokeWidth = 4.5
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -970,7 +973,7 @@ class GlucoseTrendPainter extends CustomPainter {
 // ==========================================
 class LiveECGCanvas extends StatefulWidget {
   final int bpm;
-  LiveECGCanvas({super.key, required this.bpm});
+  const LiveECGCanvas({super.key, required this.bpm});
 
   @override
   State<LiveECGCanvas> createState() => _LiveECGCanvasState();
@@ -1036,7 +1039,7 @@ class ECGPainter extends CustomPainter {
       ..strokeJoin = StrokeJoin.round;
 
     final glowPaint = Paint()
-      ..color = AppTheme.primaryPurple.withOpacity(0.3)
+      ..color = AppTheme.primaryPurple.withValues(alpha: 0.3)
       ..strokeWidth = 5.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round

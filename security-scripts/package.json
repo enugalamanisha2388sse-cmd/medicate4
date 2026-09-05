@@ -1,0 +1,17 @@
+{
+  "name": "medicate-security-scripts",
+  "version": "1.0.0",
+  "description": "Security assessment scripts for Medicate Flutter healthcare app",
+  "main": "generate-security-excel.js",
+  "scripts": {
+    "report": "node generate-security-excel.js",
+    "report:watch": "node generate-security-excel.js && echo 'Report generated!'"
+  },
+  "keywords": ["security", "sast", "vulnerability", "excel", "report", "medicate"],
+  "author": "Medicate Security Team",
+  "license": "MIT",
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "moment": "^2.29.4"
+  }
+}

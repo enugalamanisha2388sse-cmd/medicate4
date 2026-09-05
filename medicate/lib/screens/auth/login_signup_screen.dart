@@ -5,14 +5,7 @@ import '../../core/theme.dart';
 import '../../core/services/services.dart';
 import '../patient/patient_dashboard.dart';
 import '../doctor/doctor_dashboard.dart';
-
-// Admin dashboard placeholder (keeps existing import)
-// ignore: must_be_immutable
-class _AdminDashboardPlaceholder extends StatelessWidget {
-  const _AdminDashboardPlaceholder();
-  @override
-  Widget build(BuildContext context) => const SizedBox();
-}
+import '../admin/admin_dashboard.dart';
 
 class LoginSignupScreen extends StatefulWidget {
   final UserRole role;
@@ -35,9 +28,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
   // Signup controllers
   final _signupName     = TextEditingController();
   final _signupEmail    = TextEditingController();
+  final _signupPhone    = TextEditingController();
   final _signupPassword = TextEditingController();
   final _signupConfirm  = TextEditingController();
   final _adminCode      = TextEditingController();
+  bool _isEmailOtp      = true;
 
   // OTP
   final _otpController = TextEditingController();
@@ -47,15 +42,12 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
   bool _signupObscure = true;
   bool _confirmObscure = true;
   bool _isLoading = false;
+  String? _loginError;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-
-    // Pre-fill demo credentials
-    _loginEmail.text = _demoEmail;
-    _loginPassword.text = 'password123';
   }
 
   String get _demoEmail {
@@ -74,14 +66,6 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
     }
   }
 
-  Color get _roleColor {
-    switch (widget.role) {
-      case UserRole.patient: return AppTheme.primaryBlue;
-      case UserRole.doctor:  return AppTheme.primaryIndigo;
-      case UserRole.admin:   return const Color(0xFFF59E0B);
-    }
-  }
-
   IconData get _roleIcon {
     switch (widget.role) {
       case UserRole.patient: return Icons.person_rounded;
@@ -94,7 +78,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
   void dispose() {
     _tabController.dispose();
     _loginEmail.dispose();    _loginPassword.dispose();
-    _signupName.dispose();    _signupEmail.dispose();
+    _signupName.dispose();    _signupEmail.dispose();    _signupPhone.dispose();
     _signupPassword.dispose(); _signupConfirm.dispose();
     _adminCode.dispose();     _otpController.dispose();
     super.dispose();
@@ -107,7 +91,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(milliseconds: 800));
 
-    final success = provider.login(
+    final success = await provider.login(
       _loginEmail.text.trim(),
       _loginPassword.text,
       widget.role,
@@ -117,6 +101,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
     if (success) {
       _navigateToDashboard();
     } else {
+      setState(() => _loginError = 'Invalid credentials or role mismatch. Try the demo account.');
       _showError('Invalid credentials or role mismatch. Try the demo account.');
     }
   }
@@ -136,9 +121,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
       // Request OTP
       try {
         await Future.delayed(const Duration(milliseconds: 600));
-        provider.requestSignUpOtp(_signupEmail.text.trim());
+        await provider.requestSignUpOtp(_signupEmail.text.trim(), _signupPhone.text.trim(), _isEmailOtp);
         setState(() { _showOtpField = true; _isLoading = false; });
-        _showSuccess('OTP sent! Use the code shown in the debug banner (simulated).');
+        _showSuccess('OTP verification code has been generated and sent.');
       } catch (e) {
         setState(() => _isLoading = false);
         _showError(e.toString().replaceAll('Exception:', '').trim());
@@ -146,11 +131,12 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
     } else {
       // Verify OTP
       await Future.delayed(const Duration(milliseconds: 600));
-      final ok = provider.verifyOtpAndRegister(
+      final ok = await provider.verifyOtpAndRegister(
         _signupName.text.trim(),
         _signupEmail.text.trim(),
         _signupPassword.text,
         widget.role,
+        _signupPhone.text.trim(),
         _otpController.text.trim(),
       );
       setState(() => _isLoading = false);
@@ -158,7 +144,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
       if (ok) {
         _navigateToDashboard();
       } else {
-        _showError('Invalid OTP. Check the debug banner and try again.');
+        _showError('Invalid OTP code. Please try again.');
       }
     }
   }
@@ -172,7 +158,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
     switch (user.role) {
       case UserRole.patient: dest = PatientDashboard(); break;
       case UserRole.doctor:  dest = DoctorDashboard(); break;
-      case UserRole.admin:   dest = PatientDashboard(); break; // Admin uses same shell for now
+      case UserRole.admin:   dest = const AdminDashboard(); break;
     }
 
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => dest));
@@ -253,9 +239,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   final provider = Provider.of<MedicateProvider>(ctx, listen: false);
-                  final sent = provider.sendPasswordReset(emailCtrl.text.trim());
+                  final sent = await provider.sendPasswordReset(emailCtrl.text.trim());
                   Navigator.pop(ctx);
                   if (sent) {
                     _showSuccess('Reset link sent to ${emailCtrl.text.trim()}!');
@@ -296,7 +282,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                         child: Container(
                           width: 40, height: 40,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.15),
+                            color: Colors.white.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Icon(Icons.arrow_back_ios_new_rounded,
@@ -309,7 +295,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                           Container(
                             width: 48, height: 48,
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
+                              color: Colors.white.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Icon(_roleIcon, color: Colors.white, size: 26),
@@ -329,7 +315,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                               Text(
                                 'Welcome to SmartMed',
                                 style: GoogleFonts.poppins(
-                                  color: Colors.white.withOpacity(0.75),
+                                  color: Colors.white.withValues(alpha: 0.75),
                                   fontSize: 13,
                                 ),
                               ),
@@ -384,7 +370,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                         unselectedLabelColor: AppTheme.textSecondary,
                         tabs: const [
                           Tab(text: 'Sign In'),
-                          Tab(text: 'Sign Up'),
+                          Tab(key: Key('signup_tab_btn'), text: 'Sign Up'),
                         ],
                       ),
                     ),
@@ -417,32 +403,12 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Demo badge
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.2)),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.info_outline_rounded, size: 16, color: AppTheme.primaryBlue),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Demo: $_demoEmail / password123',
-                      style: AppTextStyles.bodySmall(color: AppTheme.primaryBlue),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
             // Email
             Text('Email Address', style: AppTextStyles.labelLarge()),
             const SizedBox(height: 8),
             TextFormField(
+              key: const Key('login_email_field'),
               controller: _loginEmail,
               keyboardType: TextInputType.emailAddress,
               style: AppTextStyles.bodyLarge(color: AppTheme.textPrimary),
@@ -462,6 +428,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
             Text('Password', style: AppTextStyles.labelLarge()),
             const SizedBox(height: 8),
             TextFormField(
+              key: const Key('login_password_field'),
               controller: _loginPassword,
               obscureText: _loginObscure,
               style: AppTextStyles.bodyLarge(color: AppTheme.textPrimary),
@@ -507,7 +474,11 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
               width: double.infinity,
               height: 52,
               child: ElevatedButton(
-                onPressed: _isLoading ? null : _handleLogin,
+                key: const Key('login_submit_btn'),
+                onPressed: _isLoading ? null : () {
+                  setState(() => _loginError = null);
+                  _handleLogin();
+                },
                 child: _isLoading
                     ? const SizedBox(
                         width: 22, height: 22,
@@ -518,6 +489,17 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                     : Text('Sign In', style: AppTextStyles.buttonText()),
               ),
             ),
+            // Inline error for Appium key= selector
+            if (_loginError != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(
+                  key: const Key('login_error_text'),
+                  _loginError!,
+                  style: AppTextStyles.bodySmall(color: AppTheme.error),
+                  textAlign: TextAlign.center,
+                ),
+              ),
           ],
         ),
       ),
@@ -598,6 +580,49 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
       },
     ),
     const SizedBox(height: 16),
+    _fieldLabel('Phone Number'),
+    const SizedBox(height: 8),
+    TextFormField(
+      controller: _signupPhone,
+      keyboardType: TextInputType.phone,
+      style: AppTextStyles.bodyLarge(color: AppTheme.textPrimary),
+      decoration: AppTheme.inputDecoration(label: '', icon: Icons.phone_android_rounded, hint: '+1 (555) 000-0000').copyWith(labelText: null),
+      validator: (v) {
+        if (v == null || v.isEmpty) return 'Phone number is required';
+        return null;
+      },
+    ),
+    const SizedBox(height: 16),
+    _fieldLabel('OTP Delivery Method'),
+    const SizedBox(height: 8),
+    Row(
+      children: [
+        Expanded(
+          child: ChoiceChip(
+            label: Text('Gmail / Email', style: TextStyle(color: _isEmailOtp ? Colors.white : AppTheme.textSecondary, fontWeight: FontWeight.bold, fontSize: 11)),
+            selected: _isEmailOtp,
+            selectedColor: AppTheme.primaryBlue,
+            backgroundColor: AppTheme.cardColor,
+            onSelected: (val) {
+              setState(() => _isEmailOtp = true);
+            },
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: ChoiceChip(
+            label: Text('Phone SMS', style: TextStyle(color: !_isEmailOtp ? Colors.white : AppTheme.textSecondary, fontWeight: FontWeight.bold, fontSize: 11)),
+            selected: !_isEmailOtp,
+            selectedColor: AppTheme.primaryBlue,
+            backgroundColor: AppTheme.cardColor,
+            onSelected: (val) {
+              setState(() => _isEmailOtp = false);
+            },
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 16),
     _fieldLabel('Password'),
     const SizedBox(height: 8),
     TextFormField(
@@ -656,9 +681,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
     Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.primaryBlue.withOpacity(0.08),
+        color: AppTheme.primaryBlue.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.25)),
+        border: Border.all(color: AppTheme.primaryBlue.withValues(alpha: 0.25)),
       ),
       child: Row(
         children: [
@@ -666,7 +691,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'OTP sent to ${_signupEmail.text}. In simulation, check the debug console for the generated OTP.',
+              _isEmailOtp
+                  ? 'Verification OTP sent to ${_signupEmail.text.trim()}.'
+                  : 'Verification OTP sent to ${_signupPhone.text.trim()}.',
               style: AppTextStyles.bodySmall(color: AppTheme.primaryBlue),
             ),
           ),
