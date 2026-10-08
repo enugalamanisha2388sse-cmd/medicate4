@@ -266,8 +266,12 @@ function generateLoadTests() {
   const scenarios = [
     { name: 'Baseline Load (100 VUs)', vus: 100, dur: '1m' },
     { name: 'Ramp Up (1-100 VUs)', vus: 100, dur: '2m' },
-    { name: 'Spike (200 VUs)', vus: 200, dur: '30s' },
-    { name: 'Soak (50 VUs)', vus: 50, dur: '5m' },
+    { name: 'Spike Test (200 VUs)', vus: 200, dur: '30s' },
+    { name: 'Soak Test (50 VUs)', vus: 50, dur: '5m' },
+    { name: 'Stress Test (150 VUs)', vus: 150, dur: '2m' },
+    { name: 'Break Point (300 VUs)', vus: 300, dur: '1m' },
+    { name: 'Recovery Test (100→0 VUs)', vus: 100, dur: '1m' },
+    { name: 'Step Load (25→100 VUs)', vus: 100, dur: '3m' },
   ];
   let counter = 1;
   scenarios.forEach(sc => {
