@@ -11,7 +11,14 @@
     "test:smoke": "npx mocha tests/login-tests.js --grep \"Page Load\" --timeout 15000",
     "report": "node generate-report.js"
   },
-  "keywords": ["selenium", "e2e", "testing", "flutter", "smartmed", "medicate"],
+  "keywords": [
+    "selenium",
+    "e2e",
+    "testing",
+    "flutter",
+    "smartmed",
+    "medicate"
+  ],
   "author": "SmartMed QA Team",
   "license": "MIT",
   "devDependencies": {
@@ -19,6 +26,6 @@
     "chromedriver": "latest",
     "exceljs": "^4.4.0",
     "mocha": "^10.4.0",
-    "selenium-webdriver": "^4.21.0"
+    "selenium-webdriver": "^4.50.0"
   }
 }
