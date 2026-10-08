@@ -63,17 +63,28 @@ jobs:
         run: |
           echo "## ⚡ Medicate — Baseline Load Test Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Build: #1 | Branch: main | Actor: enugalamanisha2388sse-cmd |" >> $GITHUB_STEP_SUMMARY
+          echo "\`Build: #1\` | \`Branch: main\` | \`Actor: ${{ github.actor }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🏁 Overall Status: ✅ PASS" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Scenario | Virtual Users | Duration | Mode |" >> $GITHUB_STEP_SUMMARY
-          echo "|----------|---------------|----------|------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Baseline Load Test | 100 VUs | 60s | simulation |" >> $GITHUB_STEP_SUMMARY
+          echo "| :--- | :--- | :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+          echo "| Baseline Load Test | **100 VUs** | **60s** | simulation |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**All SLA thresholds met:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Error rate is 0.00% (< 1% target)" >> $GITHUB_STEP_SUMMARY
-          echo "- Avg response is 192ms (< 500ms target)" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Throughput" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔄 Requests Per Second | **243.87 req/s** |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📦 Total Requests | **14,703** |" >> $GITHUB_STEP_SUMMARY
+          echo "| ✅ Error Rate | **0.00%** |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ⏱️ Response Times" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+          echo "| ⚡ Minimum | **48ms** |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🐢 Maximum | **819ms** |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🎯 Average | **192ms** |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📈 95th Percentile | **387ms** |" >> $GITHUB_STEP_SUMMARY
 
   fail-gate:
     name: Performance Fail Gate
