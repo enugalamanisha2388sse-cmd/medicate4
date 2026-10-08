@@ -4,19 +4,26 @@
   "description": "Medicate Baseline Load Test Suite — 100 VUs × 1 minute with Excel reporting",
   "main": "scripts/load-simulator.js",
   "scripts": {
-    "test":           "node scripts/load-simulator.js",
-    "test:live":      "BASE_URL=$BASE_URL node scripts/load-simulator.js",
-    "test:50vus":     "VUS=50 node scripts/load-simulator.js",
-    "test:200vus":    "VUS=200 node scripts/load-simulator.js",
-    "report":         "node scripts/generate-load-excel.js",
-    "full":           "node scripts/load-simulator.js && node scripts/generate-load-excel.js",
-    "k6":             "k6 run baseline-load-test.js --out json=results/k6-output.json",
-    "k6:live":        "k6 run --env BASE_URL=$BASE_URL baseline-load-test.js",
-    "posttest":       "node scripts/generate-load-excel.js"
+    "test": "node scripts/load-simulator.js",
+    "test:live": "BASE_URL=$BASE_URL node scripts/load-simulator.js",
+    "test:50vus": "VUS=50 node scripts/load-simulator.js",
+    "test:200vus": "VUS=200 node scripts/load-simulator.js",
+    "report": "node scripts/generate-load-excel.js",
+    "full": "node scripts/load-simulator.js && node scripts/generate-load-excel.js",
+    "k6": "k6 run baseline-load-test.js --out json=results/k6-output.json",
+    "k6:live": "k6 run --env BASE_URL=$BASE_URL baseline-load-test.js",
+    "posttest": "node scripts/generate-load-excel.js"
   },
   "keywords": [
-    "load-testing", "performance", "k6", "baseline", "medicate",
-    "100-vus", "throughput", "response-time", "excel-report"
+    "load-testing",
+    "performance",
+    "k6",
+    "baseline",
+    "medicate",
+    "100-vus",
+    "throughput",
+    "response-time",
+    "excel-report"
   ],
   "author": "Medicate QA Team",
   "license": "MIT",
