@@ -4,25 +4,34 @@
   "description": "SmartMed Mobile App — Appium E2E Test Suite (300+ Test Cases) for Flutter Android/iOS",
   "main": "tests/app-tests.js",
   "scripts": {
-    "test":             "mocha tests/app-tests.js --timeout 60000 --reporter spec",
-    "test:auth":        "mocha tests/app-tests.js --grep \"Authentication\" --timeout 60000",
-    "test:patient":     "mocha tests/app-tests.js --grep \"Patient\" --timeout 60000",
-    "test:doctor":      "mocha tests/app-tests.js --grep \"Doctor\" --timeout 60000",
-    "test:admin":       "mocha tests/app-tests.js --grep \"Admin\" --timeout 60000",
-    "test:smoke":       "mocha tests/app-tests.js --grep \"Smoke\" --timeout 30000",
-    "report":           "node generate-report.js",
-    "test:report":      "mocha tests/app-tests.js --timeout 60000 && node generate-report.js"
+    "test": "mocha tests/app-tests.js --timeout 60000 --reporter spec",
+    "test:auth": "mocha tests/app-tests.js --grep \"Authentication\" --timeout 60000",
+    "test:patient": "mocha tests/app-tests.js --grep \"Patient\" --timeout 60000",
+    "test:doctor": "mocha tests/app-tests.js --grep \"Doctor\" --timeout 60000",
+    "test:admin": "mocha tests/app-tests.js --grep \"Admin\" --timeout 60000",
+    "test:smoke": "mocha tests/app-tests.js --grep \"Smoke\" --timeout 30000",
+    "report": "node generate-report.js",
+    "test:report": "mocha tests/app-tests.js --timeout 60000 && node generate-report.js"
   },
-  "keywords": ["appium", "e2e", "flutter", "android", "ios", "smartmed", "medicate", "mobile"],
+  "keywords": [
+    "appium",
+    "e2e",
+    "flutter",
+    "android",
+    "ios",
+    "smartmed",
+    "medicate",
+    "mobile"
+  ],
   "author": "SmartMed QA Team",
   "license": "MIT",
   "dependencies": {
     "exceljs": "^4.4.0"
   },
   "devDependencies": {
-    "chai":       "^4.3.10",
-    "mocha":      "^10.4.0",
-    "webdriverio": "^8.39.0",
-    "@wdio/appium-service": "^8.39.0"
+    "@wdio/appium-service": "^8.39.0",
+    "chai": "^4.3.10",
+    "mocha": "^10.4.0",
+    "webdriverio": "^8.46.0"
   }
 }
