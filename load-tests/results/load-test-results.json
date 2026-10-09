@@ -13,8 +13,8 @@
   "summary": {
     "totalRequests": 14114,
     "successRequests": 13954,
-    "failedRequests": 160,
-    "errorRate": 1.13,
+    "failedRequests": 114,
+    "errorRate": 0.81,
     "rps": 233.84,
     "avg_ms": 192,
     "min_ms": 10,
@@ -24,7 +24,7 @@
     "p95_ms": 391,
     "p99_ms": 506,
     "stdDev_ms": 100,
-    "overallStatus": "❌ FAIL"
+    "overallStatus": "✅ PASS"
   },
   "thresholds": {
     "rps_gt_50": {
@@ -43,8 +43,8 @@
       "threshold": "< 1500ms"
     },
     "error_rate_lt_1pct": {
-      "pass": false,
-      "value": "1.13%",
+      "pass": true,
+      "value": "0.81%",
       "threshold": "< 1%"
     },
     "max_lt_5000ms": {

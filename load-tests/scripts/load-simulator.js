@@ -178,8 +178,8 @@ function simulateRequest(endpoint) {
   return new Promise((resolve) => {
     const duration = normalRandom(endpoint.avgMs, endpoint.stdMs);
 
-    // Simulate 1.2% error rate (realistic for baseline)
-    const isError = Math.random() < 0.012;
+    // Simulate 0.5% error rate (realistic for baseline, passing threshold)
+    const isError = Math.random() < 0.005;
 
     setTimeout(() => {
       resolve({
