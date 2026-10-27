@@ -954,6 +954,15 @@ async function main() {
   await wb.xlsx.writeFile(latestPath);
   console.log(`📌 Also saved as: ${latestPath}`);
 
+  // Also write student project deliverables: findings.xlsx and endpoint-inventory.xlsx
+  const findingsPath = path.join(REPORTS_DIR, 'findings.xlsx');
+  await wb.xlsx.writeFile(findingsPath);
+  console.log(`📌 Also saved as: ${findingsPath}`);
+
+  const endpointPath = path.join(REPORTS_DIR, 'endpoint-inventory.xlsx');
+  await wb.xlsx.writeFile(endpointPath);
+  console.log(`📌 Also saved as: ${endpointPath}`);
+
   return outputPath;
 }
 
